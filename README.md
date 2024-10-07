@@ -27,7 +27,7 @@ This guide provides step-by-step instructions to set up and deploy your infrastr
    ```sh
    terraform init -upgrade
    ```
-4. **Create an execution plan***
+4. **Create an execution plan**
 
     Generate and save an execution plan to review the changes Terraform will make:
     ```sh
