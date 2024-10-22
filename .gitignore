@@ -1,3 +1,6 @@
 .terraform/
 main.tfplan
 .terraform.lock.hcl
+sample
+sample_backup.tf
+working_script.tf
