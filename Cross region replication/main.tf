@@ -2,8 +2,8 @@ provider "azurerm" {
   features {}
 }
 resource "azurerm_resource_group" "default" {
-  name     = "gkasar-resilience-terraform"
-  location = "Australia East"
+  name     = <resource-name>
+  location = <region>
 }
 resource "azurerm_virtual_network" "example" {
   name                = "example-vn"
@@ -13,7 +13,7 @@ resource "azurerm_virtual_network" "example" {
 }
 
 resource "azurerm_network_security_group" "default" {
-  name                = "example-security-group"
+  name                = <nsg-name>
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
 
@@ -31,7 +31,7 @@ resource "azurerm_network_security_group" "default" {
 }
 
 resource "azurerm_subnet" "example" {
-  name                 = "example-sn"
+  name                 = <subnet-name>
   resource_group_name  = azurerm_resource_group.default.name
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.2.0/24"]
@@ -58,32 +58,20 @@ resource "azurerm_private_dns_zone" "example" {
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "example" {
-  name                  = "exampleVnetZone.com"
+  name                  = <dns-link>
   private_dns_zone_name = azurerm_private_dns_zone.example.name
   virtual_network_id    = azurerm_virtual_network.example.id
   resource_group_name   = azurerm_resource_group.default.name
   depends_on            = [azurerm_subnet.example]
 }
-resource "azurerm_private_dns_zone_virtual_network_link" "default" {
-  name                  = "westVnetZone.com"
-  private_dns_zone_name = azurerm_private_dns_zone.example.name
-  virtual_network_id    = azurerm_virtual_network.default.id
-  resource_group_name   = azurerm_resource_group.default.name
-  depends_on            = [azurerm_subnet.default]
-}
 resource "azurerm_postgresql_flexible_server" "default" {
-  name                          = "flex-instance-server"
+  name                          = <server-name>
   resource_group_name           = azurerm_resource_group.default.name
   location                      = azurerm_resource_group.default.location
   version                       = "16"
   public_network_access_enabled = false
-  administrator_login           = "psqladmin"
-  administrator_password        = "H@Sh1CoR3!"
-  zone                          = "2"
-  high_availability {
-    mode                      = "SameZone"
-  }
-
+  administrator_login           = <username>
+  administrator_password        = <password>
   storage_mb                    = 32768
   storage_tier                  = "P30"
   sku_name                      = "GP_Standard_D2ads_v5"
