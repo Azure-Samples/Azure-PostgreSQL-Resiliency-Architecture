@@ -1,6 +1,25 @@
-# Terraform Azure Setup
+# Azure-PostgreSQL-Resilience-Architecture - Terraform
 
-This guide provides step-by-step instructions to set up and deploy your infrastructure on Azure using Terraform.
+Azure PostgreSQL Flexible server resilience architecture provides you with the capability to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. There are 3 variants in this architecture
+
+1. **Zonal Resilience - without Read Replica**:
+   
+   This has one primary instance of Azure PostgreSQL Flexible server instance and is enabled with High Availability. In this configuration when we enable high availability for this instance we can deploy the standby 
+   instance with two options by changing the "mode" attribute. There are two values for this attribute:
+   
+   a. **ZoneRedundant** - Deploying standby in different zone
+   
+   b. **SameZone** - Deploying standby instance in the same zone as that of primary
+   
+2. **Zonal Resilience - with Read Replica** :
+   
+    This configuration has one instance of Azure PostgreSQL Flexible Server and two read replicas in same region as that of primary instance. In this type we can configure the "zone" attribute which is specifies the value 
+    for Availability zone like we have in the portal. We have 3 Availability zones in Azure PostgreSQL Flexible Server. The value added here depends on what is the value added for the Primary instance
+
+3.  **Regional Resilience** :
+
+   Azure PostgreSQL supports deployment of 5 read replicas in any region. In this type of configuration we have 2 read replicas in the same region as that of primary and three read replicas are deployed in a different 
+   region to that of the primary server. 
 
 ## Prerequisites
 
@@ -8,7 +27,7 @@ This guide provides step-by-step instructions to set up and deploy your infrastr
 - Azure CLI installed
 - Terraform installed
 
-## Steps
+## Steps to execute the terraform script
 
 1. **Go to Azure portal and launch the CLI**
 
@@ -18,7 +37,7 @@ This guide provides step-by-step instructions to set up and deploy your infrastr
 
    Set your Azure subscription using the following command:
    ```sh
-   az account set --subscription "Name"
+   az account set --subscription <subscription-name>
    ```
 3.  **Upload all files**
 
