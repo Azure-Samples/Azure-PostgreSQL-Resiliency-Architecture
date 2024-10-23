@@ -2,17 +2,17 @@ provider "azurerm" {
   features {}
 }
 resource "azurerm_resource_group" "default" {
-  name     = "gkasar-readreplica-terraform"
-  location = "Canada Central"
+  name     = <resource-name>
+  location = <region>
 }
 resource "azurerm_virtual_network" "example" {
-  name                = "demo-vn"
+  name                = <vnet-name>
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
   address_space       = ["10.0.0.0/16"]
 }
 resource "azurerm_network_security_group" "default" {
-  name                = "demo-security-group"
+  name                = <nsg-name>
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
 
@@ -29,7 +29,7 @@ resource "azurerm_network_security_group" "default" {
   }
 }
 resource "azurerm_subnet" "example" {
-  name                 = "demo-sn"
+  name                 = <subnet-name>
   resource_group_name  = azurerm_resource_group.default.name
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.2.0/24"]
@@ -49,12 +49,12 @@ resource "azurerm_subnet_network_security_group_association" "default" {
   network_security_group_id = azurerm_network_security_group.default.id
 }
 resource "azurerm_private_dns_zone" "example" {
-  name                = "gkasar.postgres.database.azure.com"
+  name                = "<name>.postgres.database.azure.com"
   resource_group_name = azurerm_resource_group.default.name
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "example" {
-  name                  = "exampleVnetZone.com"
+  name                  = "<dns-vnet-link-name>.com"
   private_dns_zone_name = azurerm_private_dns_zone.example.name
   virtual_network_id    = azurerm_virtual_network.example.id
   resource_group_name   = azurerm_resource_group.default.name
@@ -62,13 +62,13 @@ resource "azurerm_private_dns_zone_virtual_network_link" "example" {
 }
 
 resource "azurerm_postgresql_flexible_server" "default" {
-  name                          = "example"
+  name                          = <server-name>
   resource_group_name           = azurerm_resource_group.default.name
   location                      = azurerm_resource_group.default.location
   version                       = "16"
   public_network_access_enabled = false
-  administrator_login           = "psqladmin"
-  administrator_password        = "H@Sh1CoR3!"
+  administrator_login           = <user-name>
+  administrator_password        = <password>
   zone                          = "1"
   storage_mb                    = 32768
   storage_tier                  = "P30"
