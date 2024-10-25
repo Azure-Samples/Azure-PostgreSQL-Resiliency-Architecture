@@ -62,13 +62,25 @@ resource "azurerm_private_dns_zone_virtual_network_link" "example" {
 }
 
 resource "azurerm_postgresql_flexible_server" "default" {
-  name                          = <server-name>
+  for_each                      = {
+    server1 = {
+      name                = "server-name-1"
+      administrator_login = "user-name-1"
+      administrator_password = "password-1"
+    }
+    server2 = {
+      name                = "server-name-2"
+      administrator_login = "user-name-2"
+      administrator_password = "password-2"
+    }
+  }
+  name                          = each.value.name
   resource_group_name           = azurerm_resource_group.default.name
   location                      = azurerm_resource_group.default.location
   version                       = "16"
   public_network_access_enabled = false
-  administrator_login           = <user-name>
-  administrator_password        = <password>
+  administrator_login           = each.value.administrator_login
+  administrator_password        = each.value.administrator_password
   zone                          = "1"
   storage_mb                    = 32768
   storage_tier                  = "P30"
