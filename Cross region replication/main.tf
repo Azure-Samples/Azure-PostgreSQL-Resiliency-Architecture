@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "default" {
   location = <region>
 }
 resource "azurerm_virtual_network" "example" {
-  name                = "example-vn"
+  name                = <cn-name>
   location            = azurerm_resource_group.default.location
   resource_group_name = azurerm_resource_group.default.name
   address_space       = ["10.0.0.0/16"]
@@ -53,7 +53,7 @@ resource "azurerm_subnet_network_security_group_association" "default" {
 }
 
 resource "azurerm_private_dns_zone" "example" {
-  name                = "gkasar.postgres.database.azure.com"
+  name                = "<dns-name>.postgres.database.azure.com"
   resource_group_name = azurerm_resource_group.default.name
 }
 
