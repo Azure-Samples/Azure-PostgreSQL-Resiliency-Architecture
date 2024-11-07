@@ -5,10 +5,9 @@ variable "resourceName" {
   default     = <resource-group-name>"
   description = "Prefix of the resource name."
 }
-
 variable "location" {
   default     = "<region>"
-  description = "Location of the resource."
+  description = "Region of the resource group."
 }  
 variable "virtualNetwork"{
   default ="<vnet-name>"
@@ -66,9 +65,9 @@ variable "username"{
     default="<username>"
 
 }
-
 variable "location2"{
   default="<cross-regionreplica-region>"
+  description="Select a different region than primary instance"
 }
 variable "pgVersion"{
   default="16"
