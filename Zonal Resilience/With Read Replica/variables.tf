@@ -5,10 +5,9 @@ variable "resourceName" {
   default     = <resource-group-name>"
   description = "Prefix of the resource name."
 }
-
 variable "location" {
   default     = "<region>"
-  description = "Location of the resource."
+  description = "Region of the resource group."
 }  
 variable "virtualNetwork"{
   default ="<vnet-name>"
@@ -49,9 +48,6 @@ variable "readReplica1"{
 variable "readReplica2"{
     default="<replica-server2-name>"
     description="read replica 2"
-}
-variable "location2"{
-  default="<cross-regionreplica-region>"
 }
 variable "pgVersion"{
   default="16"
