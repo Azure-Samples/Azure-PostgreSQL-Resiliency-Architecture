@@ -18,14 +18,14 @@ Azure PostgreSQL Flexible server resilience architecture provides you with the c
     This configuration has one instance of Azure PostgreSQL Flexible Server and two read replicas in same region as that of primary instance. In this type we can configure the "zone" attribute which is specifies the value 
     for Availability zone like we have in the portal. We have 3 Availability zones in Azure PostgreSQL Flexible Server. The value added here depends on what is the value added for the Primary instance
    
-![screenshot](Same region read replica.png)
+![screenshot](SR-readreplica.png)
 
 3.  **Regional Resilience** :
 
    Azure PostgreSQL supports deployment of 5 read replicas in any region. In this type of configuration we have 2 read replicas in the same region as that of primary and three read replicas are deployed in a different 
    region to that of the primary server. 
 
-![screenshot](crossregion_readreplica.png)
+![screenshot](crossregion-readreplica.png)
 ## Prerequisites
 
 - Azure account
@@ -50,15 +50,15 @@ Azure PostgreSQL Flexible server resilience architecture provides you with the c
 
    a. **Zonal Resilience - without Read Replica**
 
-      This has a script that will just deploy Azure PostgreSQL Flexible server instance with high avaliability enabled attribute.
+      This has a script that will just deploy Azure PostgreSQL Flexible server instance with high avaliability enabled attribute. Edit the "variables.tf" file with your subscription-id, desired names, version etc for all the resources.
 
    b. **Zonal Resilience - with Read Replica**
       
-      This script has 2 files: First file would deploy  Azure PostgreSQL Flexible server instance, and second file "replicas.tf" has two read replicas which would be deployed in the same region as the Flexible server instance
-
+      This script has 2 files: First file is a variables file, please add values to different attributes in this file.  and second file "main.tf" has all the modules and resources that would be deployed with two read replicas in the same region as that of the Primary instance.
+   
    c. **Regional Resilience**
 
-      This script has 2 files: you can either continue with same configuration created in b option or if not created then execute b option and then just run the 'crossregionreplica.tf' file to deploy 3 read replicas in a different region from Azure PostgreSQL Flexible server instance.
+      This script has 2 files: First file is a variables file, please add values to different attributes in this file.  and second file "main.tf" has all the modules and resources that would be deployed with two read replicas in the same region as that of the Primary instance and 3 read replicas in a different region as that of Primary instance.
 
 # Steps to run a terraform file:     
 
