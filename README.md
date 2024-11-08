@@ -10,17 +10,22 @@ Azure PostgreSQL Flexible server resilience architecture provides you with the c
    a. **ZoneRedundant** - Deploying standby in different zone
    
    b. **SameZone** - Deploying standby instance in the same zone as that of primary
+
+   ![screenshot](HA.png)
    
 2. **Zonal Resilience - with Read Replica** :
    
     This configuration has one instance of Azure PostgreSQL Flexible Server and two read replicas in same region as that of primary instance. In this type we can configure the "zone" attribute which is specifies the value 
     for Availability zone like we have in the portal. We have 3 Availability zones in Azure PostgreSQL Flexible Server. The value added here depends on what is the value added for the Primary instance
+   
+![screenshot](Same region read replica.png)
 
 3.  **Regional Resilience** :
 
    Azure PostgreSQL supports deployment of 5 read replicas in any region. In this type of configuration we have 2 read replicas in the same region as that of primary and three read replicas are deployed in a different 
    region to that of the primary server. 
 
+![screenshot](crossregion_readreplica.png)
 ## Prerequisites
 
 - Azure account
