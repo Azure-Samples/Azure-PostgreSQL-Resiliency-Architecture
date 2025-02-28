@@ -7,9 +7,9 @@ Azure PostgreSQL Flexible server resilience architecture provides you with the c
    This has one primary instance of Azure PostgreSQL Flexible server instance and is enabled with High Availability. In this configuration when we enable high availability for this instance we can deploy the standby 
    instance with two options by changing the "mode" attribute. There are two values for this attribute:
    
-   a. **ZoneRedundant** - Deploying standby in different zone
+   a. **ZoneRedundant** - Deploying standby in different zone [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fzoneredundanttemplate.json)
    
-   b. **SameZone** - Deploying standby instance in the same zone as that of primary
+   b. **SameZone** - Deploying standby instance in the same zone as that of primary [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fsamezonetemplate.json)
 
    ![screenshot](HA.png)
    
