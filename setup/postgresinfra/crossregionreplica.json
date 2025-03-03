@@ -1,0 +1,208 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "serverName": {
+            "type": "string"
+        },
+        "sourceServerId": {
+            "type": "string"
+        },
+        "vmName": {
+            "type": "string",
+            "defaultValue": "GP_D4s_v3"
+        },
+        "serverEdition": {
+            "type": "string"
+        },
+        "storageSizeGB": {
+            "type": "int"
+        },
+        "storageAutogrow": {
+            "type": "string",
+            "defaultValue": "Disabled"
+        },
+        "availabilityZone": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "vnetData": {
+            "type": "object",
+            "metadata": {
+                "description": "Vnet data is an object which contains all parameters pertaining to vnet and subnet"
+            },
+            "defaultValue": {
+                "virtualNetworkName": "testVnet",
+                "virtualNetworkId": "testVnetId",
+                "subnetName": "testSubnet",
+                "virtualNetworkAddressPrefix": "10.0.0.0/16",
+                "virtualNetworkResourceGroupName": "[resourceGroup().name]",
+                "location": "eastus2",
+                "subscriptionId": "[subscription().subscriptionId]",
+                "subnetProperties": {},
+                "isNewVnet": false,
+                "subnetNeedsUpdate": false,
+                "usePrivateDnsZone": false,
+                "isNewPrivateDnsZone": false,
+                "privateDnsSubscriptionId": "[subscription().subscriptionId]",
+                "privateDnsResourceGroup": "[resourceGroup().name]",
+                "privateDnsZoneName": "testPrivateDnsZone",
+                "linkVirtualNetwork": false,
+                "Network": {}
+            }
+        },
+        "virtualNetworkDeploymentName": {
+            "type": "string"
+        },
+        "virtualNetworkLinkDeploymentName": {
+            "type": "string"
+        },
+        "privateDnsZoneDeploymentName": {
+            "type": "string"
+        },
+        "identityData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "dataEncryptionData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "apiVersion": {
+            "type": "string",
+            "defaultValue": "2022-12-01"
+        },
+        "iopsTier": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "storageType": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "condition": "[and(parameters('vnetData').usePrivateDnsZone, parameters('vnetData').isNewPrivateDnsZone)]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[parameters('privateDnsZoneDeploymentName')]",
+            "apiVersion": "2020-06-01",
+            "subscriptionId": "[parameters('vnetData').privateDnsSubscriptionId]",
+            "resourceGroup": "[parameters('vnetData').privateDnsResourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateDnsZones",
+                            "apiVersion": "2018-09-01",
+                            "name": "[parameters('vnetData').privateDnsZoneName]",
+                            "location": "global",
+                            "tags": {},
+                            "properties": {}
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[parameters('vnetData').subnetNeedsUpdate]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[parameters('virtualNetworkDeploymentName')]",
+            "apiVersion": "2020-06-01",
+            "resourceGroup": "[parameters('vnetData').virtualNetworkResourceGroupName]",
+            "subscriptionId": "[parameters('vnetData').subscriptionId]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "condition": "[parameters('vnetData').subnetNeedsUpdate]",
+                            "type": "Microsoft.Network/virtualNetworks/subnets",
+                            "name": "[concat(parameters('vnetData').virtualNetworkName, '/', parameters('vnetData').subnetName)]",
+                            "apiVersion": "2020-05-01",
+                            "properties": "[parameters('vnetData').subnetProperties]"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "2020-06-01",
+            "condition": "[and(parameters('vnetData').usePrivateDnsZone, parameters('vnetData').linkVirtualNetwork)]",
+            "name": "[parameters('virtualNetworkLinkDeploymentName')]",
+            "type": "Microsoft.Resources/deployments",
+            "dependsOn": [
+                "[parameters('privateDnsZoneDeploymentName')]",
+                "[parameters('virtualNetworkDeploymentName')]"
+            ],
+            "subscriptionId": "[parameters('vnetData').privateDnsSubscriptionId]",
+            "resourceGroup": "[parameters('vnetData').privateDnsResourceGroup]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                            "apiVersion": "2020-06-01",
+                            "name": "[concat(parameters('vnetData').privateDnsZoneName, '/', uniqueString(parameters('vnetData').virtualNetworkId))]",
+                            "location": "global",
+                            "properties": {
+                                "virtualNetwork": {
+                                    "id": "[parameters('vnetData').virtualNetworkId]"
+                                },
+                                "registrationEnabled": false
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "apiVersion": "[parameters('apiVersion')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[parameters('virtualNetworkLinkDeploymentName')]"
+            ],
+            "name": "[parameters('serverName')]",
+            "identity": "[if(empty(parameters('identityData')), json('null'), parameters('identityData'))]",
+            "properties": {
+                "createMode": "Replica",
+                "SourceServerResourceId": "[parameters('sourceServerId')]",
+                "Storage": {
+                    "StorageSizeGB": "[parameters('storageSizeGB')]",
+                    "tier": "[parameters('iopsTier')]",
+                    "Autogrow": "[parameters('storageAutogrow')]",
+                    "Type": "[if(empty(parameters('storageType')), json('null'),parameters('storageType'))]"
+                },
+                "availabilityZone": "[parameters('availabilityZone')]",
+                "Network": "[if(empty(parameters('vnetData').Network), json('null'), parameters('vnetData').Network)]",
+                "dataencryption": "[if(empty(parameters('dataEncryptionData')), json('null'), parameters('dataEncryptionData'))]"
+            },
+            "sku": {
+                "name": "[parameters('vmName')]",
+                "tier": "[parameters('serverEdition')]"
+            },
+            "tags": "[parameters('tags')]",
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers"
+        }
+    ]
+}
