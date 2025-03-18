@@ -1,9 +1,8 @@
-# Azure-PostgreSQL-Resilience-Architecture - Terraform
-
-Azure PostgreSQL Flexible server resilience architecture provides you with the capability to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. 
-
-**Regional Outage** \
-Our service is designed to safeguard your data against regional outages, ensuring protection during unforeseen events like disasters or other unexpected circumstances.
+# Azure Database for PostgreSQL Resiliency Solution Accelerator
+This is a solution accelerator is designed to help you explore different options that we provide with Azure Database for PostgreSQL Flexible Server Resiliency architecture, that provides you with the capability to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. 
+# **Azure database for PostgreSQL Resiliency features: ** \
+**Regional Outage Protection** \
+Azure Database for PostgreSQL safeguard your data against regional outages, ensuring protection during unforeseen events like disasters or other unexpected circumstances.
 
 - **Regional Disaster Protection** \
 In the event of a region-wide disaster, Azure offers robust protection by leveraging disaster recovery mechanisms across different regions. This approach ensures resilience against regional or large-scale geographic disasters, providing a reliable fallback to another region. For a detailed understanding of Azure's disaster recovery architecture, refer to the Azure to Azure Disaster Recovery Architecture. 
@@ -20,7 +19,7 @@ When architecting applications, it is crucial to consider the following objectiv
 Geo-redundant backup and restore allow you to restore your server in a different region in case of a disaster, providing 16 nines of durability for backup objects over a year. This serves as a cost-effective disaster recovery solution. Customers benefit from not having to pay for computing and disaster recovery until they initiate a restore. This feature must be configured at server creation, and it asynchronously copies backup data and transaction logs to the paired region. 
 
 **Read Replicas** \
-You can create replicas of the primary server within the same region or across different global Azure regions where Azure Database for PostgreSQL flexible server is available. In region replicas can provide replication options over default HA solutions. In region Read Replica can reduce read latency. Cross-region read replicas protect databases from region-level failures, using PostgreSQL's physical replication technology. They are available in general purpose and memory-optimized compute tiers and are updated asynchronously, which may result in some lag behind the primary server. 
+Its important performance feature in [Product] and can improve availability. You can create replicas of the primary server within the same region or across different global Azure regions where Azure Database for PostgreSQL flexible server is available. In region replicas can provide replication options over default HA solutions. In region Read Replica can reduce read latency. Cross-region read replicas protect databases from region-level failures, using PostgreSQL's physical replication technology. They are available in general purpose and memory-optimized compute tiers and are updated asynchronously, which may result in some lag behind the primary server. 
 
 ![screenshot](readreplica.png)
 
@@ -32,16 +31,18 @@ Zone redundant high availability deploys a standby replica in a different zone w
 
 In zone-redundant and zonal models, automatic backups are performed periodically from the primary database server. At the same time, the transaction logs are continuously archived in the backup storage from the standby replica. If the region supports availability zones, backup data is stored on zone-redundant storage (ZRS). In regions that don't support availability zones, backup data is stored on local redundant storage (LRS) 
 
+# Reference Architectures
+
 There are 3 variants in this architecture:
 
 - **Zonal Resilience - without Read Replica**: \
 This has one primary instance of Azure PostgreSQL Flexible server instance and is enabled with High Availability. In this configuration when we enable high availability for this instance we can deploy the standby instance with two options by changing the "mode" attribute. There are two values for this attribute:
    
-   **1.ZoneRedundant** \- Deploying standby in different zone. [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fzoneredundanttemplate.json) 
+   **1. ZoneRedundant** \- Deploying standby in different zone. [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fzoneredundanttemplate.json) 
    
     ![screenshot](Azure-PostgreSQL-Reslience-Architecture-v1.1.png)
    
-   **2.Same Zone** \- Deploying standby instance in the same zone as that of primary [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fsamezonetemplate.json)
+   **2. Same Zone** \- Deploying standby instance in the same zone as that of primary [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fsamezonetemplate.json)
 
      ![screenshot](samezone.png)
 
