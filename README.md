@@ -1,19 +1,13 @@
 # Azure Database for PostgreSQL Resiliency Solution Accelerator
-This is a solution accelerator is designed to help you explore different options that we provide with Azure Database for PostgreSQL Flexible Server Resiliency architecture, that provides you with the capability to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. 
-# **Azure database for PostgreSQL Resiliency features: ** \
-**Regional Outage Protection** \
-Azure Database for PostgreSQL safeguard your data against regional outages, ensuring protection during unforeseen events like disasters or other unexpected circumstances.
-
-- **Regional Disaster Protection** \
-In the event of a region-wide disaster, Azure offers robust protection by leveraging disaster recovery mechanisms across different regions. This approach ensures resilience against regional or large-scale geographic disasters, providing a reliable fallback to another region. For a detailed understanding of Azure's disaster recovery architecture, refer to the Azure to Azure Disaster Recovery Architecture. 
-
-- **Business Continuity with Flexible Server** \
+This is a solution accelerator is designed to help you explore different options that we provide with Azure Database for PostgreSQL Flexible Server Resiliency architecture, that provides you with the capability to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. We are also providing ARM template and Terraform scripts in this guide that can help you get started with deploying these architectures right away. \
+**Business Continuity with Flexible Server** \
 Azure Database for Postgres Flexible Server is designed to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. Built on the resilient Azure infrastructure, flexible server incorporates features that ensure high availability and fault tolerance. These features are essential for maintaining business continuity and include fault-protection mechanisms, rapid recovery capabilities, and measures to minimize data loss. 
 When architecting applications, it is crucial to consider the following objectives to ensure business continuity:  
 **1. Recovery Time Objective (RTO):** \
   This refers to the maximum acceptable amount of time an application can be offline. Different applications have varying tolerance levels for downtime; for instance, a business-critical database demands much stricter uptime compared to a test database.  
 **2. Recovery Point Objective (RPO):** \
   This indicates the maximum acceptable amount of data loss measured in time. It is vital to assess how much data loss your business can tolerate in case of a disruption. 
+
 
 **Geo-Redundant Backup and Restore** \
 Geo-redundant backup and restore allow you to restore your server in a different region in case of a disaster, providing 16 nines of durability for backup objects over a year. This serves as a cost-effective disaster recovery solution. Customers benefit from not having to pay for computing and disaster recovery until they initiate a restore. This feature must be configured at server creation, and it asynchronously copies backup data and transaction logs to the paired region. 
@@ -23,17 +17,22 @@ Its important performance feature in [Product] and can improve availability. You
 
 ![screenshot](readreplica.png)
 
-**Zonal Outage**  \
+# Azure database for PostgreSQL Resiliency features:  
+**Zonal Outage Protection**  \
 Azure Database for PostgreSQL - Flexible Server supports both zone-redundant and zonal models for high availability configurations. Both high availability configurations enable automatic failover capability with zero data loss during both planned and unplanned events. 
 
-**Zone-redundant** \
-Zone redundant high availability deploys a standby replica in a different zone with automatic failover capability. Zone redundancy provides the highest level of availability but requires you to configure application redundancy across zones. For that reason, choose zone redundancy when you want protection from availability zone level failures and when latency across the availability zones is acceptable. Zone-redundancy model offers uptime SLA of 99.99% 
+- **Zone-redundant** \
+ Zone redundant high availability deploys a standby replica in a different zone with automatic failover capability. Zone redundancy provides the highest level of availability but requires you to configure application redundancy across zones. For that reason, choose zone redundancy when you want protection from availability zone level failures and when latency across the availability zones is acceptable. Zone-redundancy model offers uptime SLA of 99.99% . In zone-redundant and zonal models, automatic backups are performed periodically from the primary database server. At the same time, the transaction logs are continuously archived in the backup storage from the standby replica. If the region supports availability zones, backup data is stored on zone-redundant storage (ZRS). In regions that don't support availability zones, backup data is stored on local redundant storage (LRS) 
+**Regional Outage Protection** \
+Azure Database for PostgreSQL safeguard your data against regional outages, ensuring protection during unforeseen events like disasters or other unexpected circumstances.
 
-In zone-redundant and zonal models, automatic backups are performed periodically from the primary database server. At the same time, the transaction logs are continuously archived in the backup storage from the standby replica. If the region supports availability zones, backup data is stored on zone-redundant storage (ZRS). In regions that don't support availability zones, backup data is stored on local redundant storage (LRS) 
+**Regional Disaster Protection** \
+In the event of a region-wide disaster, Azure offers robust protection by leveraging disaster recovery mechanisms across different regions. This approach ensures resilience against regional or large-scale geographic disasters, providing a reliable fallback to another region. For a detailed understanding of Azure's disaster recovery architecture, refer to the Azure to Azure Disaster Recovery Architecture. 
+
 
 # Reference Architectures
 
-There are 3 variants in this architecture:
+There are 3 variants in the Azure Databases for PostgreSQL Resiliency architecture:
 
 - **Zonal Resilience - without Read Replica**: \
 This has one primary instance of Azure PostgreSQL Flexible server instance and is enabled with High Availability. In this configuration when we enable high availability for this instance we can deploy the standby instance with two options by changing the "mode" attribute. There are two values for this attribute:
