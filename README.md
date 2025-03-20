@@ -12,13 +12,29 @@ RTO is the maximum acceptable downtime for an application. Different application
 ### 2. Recovery Point Objective (RPO)
 RPO refers to the maximum acceptable amount of data loss measured in time. Assessing how much data loss your business can tolerate in the event of a disruption is vital.
 
-## Core Features of Azure Database for PostgreSQL
-
 ### Geo-Redundant Backup and Restore
 Geo-redundant backups enable you to restore your server in a different region during a disaster, providing high durability for backup objects. This cost-effective solution requires configuration at server creation and asynchronously copies backup data and transaction logs to a paired region.
 
 ### Read Replicas
 Read replicas enhance performance and availability by creating copies of the primary server either in the same region or across different Azure regions. In-region replicas can improve read performance, while cross-region replicas protect against regional failures using PostgreSQL's physical replication technology. 
+
+### High-Availability
+Azure Database for PostgreSQL Flexible Server supports both zone-redundant and zonal models for high-availability configurations, providing automatic failover capabilities without any data loss during planned or unplanned events.
+
+- **Zone-Redundant:** Zone-redundant high availability deploys a standby replica in a different availability zone, enabling automatic failover to maintain service continuity. This configuration delivers the highest level of availability and requires configuring application redundancy across zones. Choose zone redundancy when you require robust protection against availability zone failures and when you can tolerate the associated latency between zones. The zone-redundancy model offers an uptime Service Level Agreement (SLA) of 99.99%.
+![screenshot](Zoneredundant.png)
+- **Zonal:** Choose a zonal deployment when you want to achieve the highest level of availability within a single availability zone, but with the lowest network latency. Zonal model offers uptime SLA of 99.95% 
+In both zone-redundant and zonal models, automatic backups are periodically performed from the primary database server, while transaction logs are continuously archived from the standby replica. If the region supports availability zones, backup data will be stored on zone-redundant storage (ZRS). In regions without availability zone support, backup data is stored on local redundant storage (LRS)
+![screenshot](samezone.png)
+
+### Resiliency without HA enabled
+For flexible servers configured without high availability, the service provides local redundant storage with three copies of data, zone-redundant backup (in regions where it's supported), and built-in server resiliency to automatically restart a crashed server and relocate the server to another physical node. Uptime SLA of 99.9% is offered in this configuration 
+![screenshot](withoutHA.png)
+
+## Resiliency Features in Azure Database for PostgreSQL
+
+### Regional Outage Protection
+Azure protects your data against regional outages, ensuring continuity during unforeseen events like disasters. In case of a widespread event, Azure's robust disaster recovery mechanisms can fallback to an alternate region, ensuring reliability.
 
 ![screenshot](readreplica.png)
 
@@ -37,14 +53,8 @@ Read replicas enhance performance and availability by creating copies of the pri
   - **Impact** \
   In Azure Database for PostgreSQL Flexible Server, when you make changes to keys or permissions on the primary server, these changes are typically replicated to any read replicas automatically. This replication includes changes to roles, permissions, and other security settings. Read replicas typically provide near-real-time updates from the primary server, but heavy, persistent write activities can lead to increased replication lag and higher storage usage on the primary due to retained WAL files
 
-### Zonal Outage Protection
-Azure Database for PostgreSQL Flexible Server supports both zone-redundant and zonal models for high-availability configurations, providing automatic failover capabilities without any data loss during planned or unplanned events.
-
-- **Zone-Redundant:** Zone-redundant high availability deploys a standby replica in a different availability zone, enabling automatic failover to maintain service continuity. This configuration delivers the highest level of availability and requires configuring application redundancy across zones. 
-
-Choose zone redundancy when you require robust protection against availability zone failures and when you can tolerate the associated latency between zones. The zone-redundancy model offers an uptime Service Level Agreement (SLA) of 99.99%. 
-
-In both zone-redundant and zonal models, automatic backups are periodically performed from the primary database server, while transaction logs are continuously archived from the standby replica. If the region supports availability zones, backup data will be stored on zone-redundant storage (ZRS). In regions without availability zone support, backup data is stored on local redundant storage (LRS)
+### Zonal Protection
+Zonal protection: We offer an option to host your standby instance in a different zone than the primary instance. You can select this option from the availability zone section on the portal and choose from zones [1, 2, 3]. This ensures that your instance is protected in case of a complete zonal outage. For example, if you select availability zone 1 for the primary instance, the standby instance can be chosen from either zone 2 or 3. Once you make this selection, the WAL server will be created in a zone that is different from both the primary and standby instances.
 
 - **Scenario:**  
   In case of Zonal outage when its Planned like scale computing and scale storage happen on the standby first and then on the primary server. Currently, the server doesn't failover for these planned operations. In case of unplanned failover the standby becomes the new primary and then it creates a new standby in a different zone.  
@@ -60,12 +70,7 @@ In both zone-redundant and zonal models, automatic backups are periodically perf
      
 - **Impact:**  
   In Azure Database for PostgreSQL Flexible Server, when you make changes to keys or permissions on the primary server, these changes are typically replicated to any read replicas automatically. This replication includes changes to roles, permissions, and other security settings. Read replicas typically provide near-real-time updates from the primary server, but heavy, persistent write activities can lead to increased replication lag and higher storage usage on the primary due to retained WAL files
-  
-
-## Resiliency Features in Azure Database for PostgreSQL
-
-### Regional Outage Protection
-Azure protects your data against regional outages, ensuring continuity during unforeseen events like disasters. In case of a widespread event, Azure's robust disaster recovery mechanisms can fallback to an alternate region, ensuring reliability.
+> Note: In the event of a zonal outage where an entire zone goes down due to unforeseen circumstances, the standby instance created in a different zone will become the primary instance. However, it is not possible to create a new standby server until the affected zone is restored.
 
 ## Reference Architectures
 Three variants exist in the Azure Database for PostgreSQL resiliency architecture:
