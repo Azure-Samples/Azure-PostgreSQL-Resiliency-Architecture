@@ -82,6 +82,7 @@ Zonal protection: We offer an option to host your standby instance in a differen
 > Note: In the event of a zonal outage where an entire zone goes down due to unforeseen circumstances, the standby instance created in a different zone will become the primary instance. However, it is not possible to create a new standby server until the affected zone is restored.
 
 ## Reference Architectures
+In this architecture we recommend using Private endpoint for the Azure Database for PostgreSQL instance. A private endpoint adds a network interface to a resource, providing it with a private IP address assigned from your virtual network. After it's applied, you can communicate with this resource exclusively via the virtual network. Please read more about benefits of using Private link [here](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-networking-private-link). 
 Three variants exist in the Azure Database for PostgreSQL resiliency architecture:
 
 ### 1. Zonal Resilience (Without Read Replica)
