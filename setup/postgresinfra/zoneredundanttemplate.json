@@ -1,0 +1,431 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "administratorLogin": {
+            "type": "string"
+        },
+        "administratorLoginPassword": {
+            "type": "securestring"
+        },
+        "location": {
+            "type": "string"
+        },
+        "serverName": {
+            "type": "string"
+        },
+        "serverEdition": {
+            "type": "string"
+        },
+        "storageSizeGB": {
+            "type": "int"
+        },
+        "haEnabled": {
+            "type": "string",
+            "defaultValue": "Disabled"
+        },
+        "availabilityZone": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "standbyAvailabilityZone": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "version": {
+            "type": "string"
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "firewallRules": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "storageAutogrow": {
+            "type": "string",
+            "defaultValue": "Enabled"
+        },
+        "backupRetentionDays": {
+            "type": "int"
+        },
+        "geoRedundantBackup": {
+            "type": "string"
+        },
+        "vmName": {
+            "type": "string",
+            "defaultValue": "Standard_D4s_v3"
+        },
+        "vnetData": {
+            "type": "object",
+            "metadata": {
+                "description": "Vnet data is an object which contains all parameters pertaining to vnet and subnet"
+            },
+            "defaultValue": {
+                "virtualNetworkName": "testVnet",
+                "subnetName": "testSubnet",
+                "virtualNetworkAddressPrefix": "10.0.0.0/16",
+                "virtualNetworkResourceGroupName": "[resourceGroup().name]",
+                "location": "eastus2",
+                "subscriptionId": "[subscription().subscriptionId]",
+                "subnetProperties": {},
+                "isNewVnet": false,
+                "subnetNeedsUpdate": false,
+                "Network": {}
+            }
+        },
+        "identityData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "dataEncryptionData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "apiVersion": {
+            "type": "string",
+            "defaultValue": "2023-06-01-preview"
+        },
+        "aadEnabled": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "aadData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "authConfig": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "cluster": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "privateEndpointEnabled": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "integrateWithPrivateDnsZone": {
+            "type": "bool",
+            "defaultValue": false
+        },
+        "privateEndpointDeploymentName": {
+            "type": "string"
+        },
+        "privateDnsZoneDeploymentName": {
+            "type": "string"
+        },
+        "virtualNetworkLinkDeploymentName": {
+            "type": "string"
+        },
+        "privateDnsGroupDeploymentName": {
+            "type": "string"
+        },
+        "subnetDeploymentName": {
+            "type": "string"
+        },
+        "privateEndpointData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "network": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "iopsTier": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "storageIops": {
+            "type": "int",
+            "defaultValue": 0
+        },
+        "throughput": {
+            "type": "int",
+            "defaultValue": 0
+        },
+        "storageType": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "guid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        }
+    },
+    "variables": {
+        "firewallRules": "[parameters('firewallRules').rules]"
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('apiVersion')]",
+            "location": "[parameters('location')]",
+            "name": "[parameters('serverName')]",
+            "identity": "[if(empty(parameters('identityData')), json('null'), parameters('identityData'))]",
+            "properties": {
+                "createMode": "Default",
+                "version": "[parameters('version')]",
+                "administratorLogin": "[parameters('administratorLogin')]",
+                "administratorLoginPassword": "[if(empty(parameters('administratorLoginPassword')), json('null'), parameters('administratorLoginPassword'))]",
+                "Cluster": "[if(empty(parameters('cluster')), json('null'), parameters('cluster'))]",
+                "Network": "[if(empty(parameters('network')), json('null'), parameters('network'))]",
+                "availabilityZone": "[parameters('availabilityZone')]",
+                "Storage": {
+                    "StorageSizeGB": "[parameters('storageSizeGB')]",
+                    "Type": "[if(empty(parameters('storageType')), json('null'),parameters('storageType'))]",
+                    "Autogrow": "[parameters('storageAutogrow')]",
+                    "tier": "[if(empty(parameters('iopsTier')), json('null'), parameters('iopsTier'))]",
+                    "Iops": "[if(equals(parameters('storageIops'), 0), json('null'), parameters('storageIops'))]",
+                    "Throughput": "[if(equals(parameters('throughput'), 0), json('null'), parameters('throughput'))]"
+                },
+                "Backup": {
+                    "backupRetentionDays": "[parameters('backupRetentionDays')]",
+                    "geoRedundantBackup": "[parameters('geoRedundantBackup')]"
+                },
+                "highAvailability": {
+                    "mode": "[parameters('haEnabled')]",
+                    "standbyAvailabilityZone": "[parameters('standbyAvailabilityZone')]"
+                },
+                "dataencryption": "[if(empty(parameters('dataEncryptionData')), json('null'), parameters('dataEncryptionData'))]",
+                "authConfig": "[if(empty(parameters('authConfig')), json('null'), parameters('authConfig'))]"
+            },
+            "sku": {
+                "name": "[parameters('vmName')]",
+                "tier": "[parameters('serverEdition')]"
+            },
+            "tags": "[parameters('tags')]",
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers"
+        },
+        {
+            "condition": "[parameters('aadEnabled')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[concat('addAdmins-', parameters('guid'))]",
+            "dependsOn": [
+                "[concat('Microsoft.DBforPostgreSQL/flexibleServers/', parameters('serverName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.DBforPostgreSQL/flexibleServers/administrators",
+                            "name": "[concat(parameters('serverName'),'/', parameters('aadData').objectId)]",
+                            "apiVersion": "[parameters('apiVersion')]",
+                            "properties": {
+                                "tenantId": "[parameters('aadData').tenantId]",
+                                "principalName": "[parameters('aadData').principalName]",
+                                "principalType": "[parameters('aadData').principalType]"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[greater(length(variables('firewallRules')), 0)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-08-01",
+            "name": "[concat('firewallRules-', parameters('guid'), '-', copyIndex())]",
+            "copy": {
+                "count": "[if(greater(length(variables('firewallRules')), 0), length(variables('firewallRules')), 1)]",
+                "mode": "Serial",
+                "name": "firewallRulesIterator"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.DBforPostgreSQL/flexibleServers/', parameters('serverName'))]",
+                "[concat('Microsoft.Resources/deployments/addAdmins-', parameters('guid'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+                            "name": "[concat(parameters('serverName'),'/',variables('firewallRules')[copyIndex()].name)]",
+                            "apiVersion": "[parameters('apiVersion')]",
+                            "properties": {
+                                "StartIpAddress": "[variables('firewallRules')[copyIndex()].startIPAddress]",
+                                "EndIpAddress": "[variables('firewallRules')[copyIndex()].endIPAddress]"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[parameters('privateEndpointEnabled')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[parameters('privateEndpointDeploymentName')]",
+            "dependsOn": [
+                "[concat('Microsoft.DBforPostgreSQL/flexibleServers/', parameters('serverName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "location": "[parameters('privateEndpointData').privateEndpointConfiguration.privateEndpoint.location]",
+                            "name": "[parameters('privateEndpointData').privateEndpointConfiguration.privateEndpoint.name]",
+                            "type": "Microsoft.Network/privateEndpoints",
+                            "apiVersion": "2021-05-01",
+                            "properties": {
+                                "subnet": {
+                                    "id": "[parameters('privateEndpointData').privateEndpointConfiguration.privateEndpoint.properties.subnet.id]"
+                                },
+                                "privateLinkServiceConnections": [
+                                    {
+                                        "name": "[parameters('privateEndpointData').privateEndpointConfiguration.privateEndpoint.properties.privateLinkServiceConnections[0].name]",
+                                        "properties": "[parameters('privateEndpointData').privateEndpointConfiguration.privateEndpoint.properties.privateLinkServiceConnections[0].properties]"
+                                    }
+                                ]
+                            },
+                            "tags": {}
+                        }
+                    ],
+                    "outputs": {}
+                }
+            },
+            "resources": [],
+            "subscriptionId": "[parameters('privateEndpointData').privateEndpointConfiguration.subscription.subscriptionId]",
+            "resourceGroup": "[parameters('privateEndpointData').privateEndpointConfiguration.resourceGroup.value.name]"
+        },
+        {
+            "condition": "[and(parameters('privateEndpointEnabled'), parameters('integrateWithPrivateDnsZone'), parameters('privateEndpointData').privateDnsZoneConfiguration.privateDnsZoneValue.isNew)]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "[parameters('privateDnsZoneDeploymentName')]",
+            "apiVersion": "2020-06-01",
+            "subscriptionId": "[split(parameters('privateEndpointData').networkingConfiguration.virtualNetworkValue.id,'/')[2]]",
+            "resourceGroup": "[split(parameters('privateEndpointData').networkingConfiguration.virtualNetworkValue.id,'/')[4]]",
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateDnsZones",
+                            "apiVersion": "2018-09-01",
+                            "name": "[parameters('privateEndpointData').privateDnsZoneConfiguration.privateDnsZoneValue.model.name]",
+                            "location": "global",
+                            "tags": {},
+                            "properties": {}
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "condition": "[and(parameters('privateEndpointEnabled'), parameters('integrateWithPrivateDnsZone'), parameters('privateEndpointData').privateDnsZoneConfiguration.privateDnsZoneValue.isNew)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "name": "[parameters('virtualNetworkLinkDeploymentName')]",
+            "dependsOn": [
+                "[parameters('privateEndpointDeploymentName')]",
+                "[parameters('privateDnsZoneDeploymentName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "apiVersion": "2017-05-10",
+                            "type": "Microsoft.Resources/deployments",
+                            "name": "[concat('virtualNetworkLink-', parameters('guid'))]",
+                            "dependsOn": [],
+                            "resources": [],
+                            "properties": {
+                                "mode": "Incremental",
+                                "parameters": {},
+                                "template": {
+                                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                                    "contentVersion": "1.0.0.0",
+                                    "parameters": {},
+                                    "variables": {},
+                                    "resources": [
+                                        {
+                                            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+                                            "apiVersion": "2018-09-01",
+                                            "name": "[concat(parameters('privateEndpointData').privateDnsZoneConfiguration.privateDnsZoneValue.model.name, '/', uniqueString(parameters('privateEndpointData').networkingConfiguration.virtualNetworkValue.id))]",
+                                            "location": "global",
+                                            "properties": {
+                                                "virtualNetwork": {
+                                                    "id": "[parameters('privateEndpointData').networkingConfiguration.virtualNetworkValue.id]"
+                                                },
+                                                "registrationEnabled": false
+                                            }
+                                        }
+                                    ],
+                                    "outputs": {}
+                                }
+                            },
+                            "subscriptionId": "[split(parameters('privateEndpointData').networkingConfiguration.virtualNetworkValue.id,'/')[2]]",
+                            "resourceGroup": "[split(parameters('privateEndpointData').networkingConfiguration.virtualNetworkValue.id,'/')[4]]"
+                        }
+                    ],
+                    "outputs": {}
+                }
+            },
+            "resources": []
+        },
+        {
+            "condition": "[and(parameters('privateEndpointEnabled'), parameters('integrateWithPrivateDnsZone'))]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "name": "[parameters('privateDnsGroupDeploymentName')]",
+            "dependsOn": [
+                "[parameters('privateEndpointDeploymentName')]",
+                "[parameters('privateDnsZoneDeploymentName')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "parameters": {},
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {},
+                    "variables": {},
+                    "resources": [
+                        {
+                            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+                            "apiVersion": "2021-05-01",
+                            "name": "[concat(parameters('privateEndpointData').privateEndpointConfiguration.privateEndpoint.name, '/', 'default')]",
+                            "location": "[parameters('privateEndpointData').privateEndpointConfiguration.privateEndpoint.location]",
+                            "properties": {
+                                "privateDnsZoneConfigs": [
+                                    {
+                                        "name": "[parameters('privateEndpointData').privateDnsZoneConfiguration.privateDnsZoneValue.model.name]",
+                                        "properties": {
+                                            "privateDnsZoneId": "[parameters('privateEndpointData').privateDnsZoneConfiguration.privateDnsZoneValue.id]"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ],
+                    "outputs": {}
+                }
+            },
+            "resources": [],
+            "subscriptionId": "[parameters('privateEndpointData').privateEndpointConfiguration.subscription.subscriptionId]",
+            "resourceGroup": "[parameters('privateEndpointData').privateEndpointConfiguration.resourceGroup.value.name]"
+        }
+    ]
+}

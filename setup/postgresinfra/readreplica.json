@@ -1,0 +1,132 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "serverName": {
+            "type": "string"
+        },
+        "sourceServerId": {
+            "type": "string"
+        },
+        "vmName": {
+            "type": "string",
+            "defaultValue": "GP_D4s_v3"
+        },
+        "serverEdition": {
+            "type": "string"
+        },
+        "storageSizeGB": {
+            "type": "int"
+        },
+        "storageAutogrow": {
+            "type": "string",
+            "defaultValue": "Disabled"
+        },
+        "availabilityZone": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "tags": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "firewallRules": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "identityData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "dataEncryptionData": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "apiVersion": {
+            "type": "string",
+            "defaultValue": "2022-12-01"
+        },
+        "network": {
+            "type": "object",
+            "defaultValue": {}
+        },
+        "iopsTier": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "guid": {
+            "type": "string",
+            "defaultValue": "[newGuid()]"
+        },
+        "storageType": {
+            "type": "string",
+            "defaultValue": ""
+        }
+    },
+    "variables": {
+        "firewallRules": "[parameters('firewallRules').rules]"
+    },
+    "resources": [
+        {
+            "apiVersion": "[parameters('apiVersion')]",
+            "kind": "",
+            "location": "[parameters('location')]",
+            "name": "[parameters('serverName')]",
+            "identity": "[if(empty(parameters('identityData')), json('null'), parameters('identityData'))]",
+            "properties": {
+                "createMode": "Replica",
+                "SourceServerResourceId": "[parameters('sourceServerId')]",
+                "Storage": {
+                    "StorageSizeGB": "[parameters('storageSizeGB')]",
+                    "tier": "[parameters('iopsTier')]",
+                    "Autogrow": "[parameters('storageAutogrow')]",
+                    "Type": "[if(empty(parameters('storageType')), json('null'),parameters('storageType'))]"
+                },
+                "availabilityZone": "[parameters('availabilityZone')]",
+                "Network": "[if(empty(parameters('network')), json('null'), parameters('network'))]",
+                "dataencryption": "[if(empty(parameters('dataEncryptionData')), json('null'), parameters('dataEncryptionData'))]"
+            },
+            "sku": {
+                "name": "[parameters('vmName')]",
+                "tier": "[parameters('serverEdition')]"
+            },
+            "tags": "[parameters('tags')]",
+            "type": "Microsoft.DBforPostgreSQL/flexibleServers"
+        },
+        {
+            "condition": "[greater(length(variables('firewallRules')), 0)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2019-08-01",
+            "name": "[concat('firewallRules-', parameters('guid'), '-', copyIndex())]",
+            "copy": {
+                "count": "[if(greater(length(variables('firewallRules')), 0), length(variables('firewallRules')), 1)]",
+                "mode": "Serial",
+                "name": "firewallRulesIterator"
+            },
+            "dependsOn": [
+                "[concat('Microsoft.DBforPostgreSQL/flexibleServers/', parameters('serverName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "template": {
+                    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+                    "contentVersion": "1.0.0.0",
+                    "resources": [
+                        {
+                            "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules",
+                            "name": "[concat(parameters('serverName'),'/',variables('firewallRules')[copyIndex()].name)]",
+                            "apiVersion": "[parameters('apiVersion')]",
+                            "properties": {
+                                "StartIpAddress": "[variables('firewallRules')[copyIndex()].startIPAddress]",
+                                "EndIpAddress": "[variables('firewallRules')[copyIndex()].endIPAddress]"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}
