@@ -1,6 +1,6 @@
 # Azure Database for PostgreSQL Resiliency Solution Accelerator
 
-## Introduction
+# Introduction
 We are excited to launch the solution accelerator for deploying Azure Database for PostgreSQL flexible server's resiliency architecture. The architecture is designed to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. This guide includes Terraform scripts and JSON templates to deploy these architectures quickly and efficiently.
 
 # Table of Content
