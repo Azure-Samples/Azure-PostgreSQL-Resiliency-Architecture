@@ -125,12 +125,12 @@ To deploy this solution using Terraform, follow these steps:
 
 ### Prerequisites:
 - An Azure account
-- Azure CLI installed
+- Azure CLI installed on your local terminal
 - Terraform installed
 
 ### Deployment Steps:
 
-1. **Open Azure CLI**: Launch the Azure portal and access the Cloud Shell or use a local terminal with the Azure CLI installed.
+1. **Open Azure CLI**: For this solution accelerator, we are utilizing Azure Cloud Shell. You can launch the Azure portal and access the Cloud Shell, or alternatively, use a local terminal with Azure CLI installed.
 
 2. **Set Account Subscription**: 
 
