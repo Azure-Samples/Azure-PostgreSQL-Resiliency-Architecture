@@ -14,16 +14,15 @@ resource "random_password" "password" {
 }
 resource "azurerm_virtual_network" "example" {
   name                = var.virtualNetwork
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
+  location            = var.location
+  resource_group_name = var.resourceName
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_network_security_group" "default" {
   name                = var.networkSecurityGroupName
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
-
+  location            = var.location
+  resource_group_name = var.resourceName
   security_rule {
     name                       = var.sgName
     priority                   = 100
@@ -39,7 +38,7 @@ resource "azurerm_network_security_group" "default" {
 
 resource "azurerm_subnet" "example" {
   name                 = var.subnetName
-  resource_group_name  = azurerm_resource_group.default.name
+  resource_group_name  = var.resourceName
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.2.0/24"]
  
@@ -50,26 +49,26 @@ resource "azurerm_subnet_network_security_group_association" "default" {
 }
 resource "azurerm_private_dns_zone" "example" {
   name                = var.privateDNSZone
-  resource_group_name = azurerm_resource_group.default.name
+  resource_group_name = var.resourceName
 }
 
 resource "azurerm_private_dns_zone_virtual_network_link" "example" {
   name                  = var.privateDNSZoneNetworkLink
   private_dns_zone_name = azurerm_private_dns_zone.example.name
   virtual_network_id    = azurerm_virtual_network.example.id
-  resource_group_name   = azurerm_resource_group.default.name
+  resource_group_name   = var.resourceName
   depends_on            = [azurerm_subnet.example]
 }
 
 
 resource "azurerm_postgresql_flexible_server" "default" {
   name                          = var.flexibleServeInstance
-  resource_group_name           = azurerm_resource_group.default.name
-  location                      = azurerm_resource_group.default.location
+  resource_group_name           = var.resourceName
+  location                      = var.location
   version                       = var.pgVersion
   public_network_access_enabled = false
   administrator_login = var.username
-  administrator_password = random_password.password.result
+  administrator_password = var.password
   high_availability {
     mode                      = "ZoneRedundant"
   }
@@ -83,8 +82,8 @@ resource "azurerm_postgresql_flexible_server" "replicaserver1" {
   name                = var.readReplica1
   administrator_login = var.username
   administrator_password = var.password
-  resource_group_name           = azurerm_resource_group.default.name
-  location                      = azurerm_resource_group.default.location
+  resource_group_name           = var.resourceName
+  location                      = var.location
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = var.pgVersion
@@ -98,8 +97,8 @@ resource "azurerm_postgresql_flexible_server" "replicaserver2" {
   name                = var.readReplica2
   administrator_login = var.username
   administrator_password = var.password
-  resource_group_name           = azurerm_resource_group.default.name
-  location                      = azurerm_resource_group.default.location
+  resource_group_name           = var.resourceName
+  location                      = var.location
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = "16"
@@ -112,7 +111,7 @@ resource "azurerm_postgresql_flexible_server" "replicaserver2" {
 resource "azurerm_private_endpoint" "example" {
   name                = var.privateEndpointName
   location            = var.location
-  resource_group_name = azurerm_resource_group.default.name
+  resource_group_name = var.resourceName
   subnet_id           = azurerm_subnet.example.id
 
   private_service_connection {

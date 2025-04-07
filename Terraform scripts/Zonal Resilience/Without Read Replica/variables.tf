@@ -2,7 +2,7 @@ variable "subscriptionID"{
   default = "<Enter-Your-Subscription-ID>"
 }
 variable "resourceName" {
-  default     = <resource-group-name>"
+  default     = "<resource-group-name>"
   description = "Prefix of the resource name."
 }
 variable "location" {
@@ -50,4 +50,10 @@ variable "skuName"{
 }
 variable "sgName"{
   default ="<service-group-name>"
+}
+variable "username" {
+  default="<user-name>"
+}
+variable "password"{
+  default="<password>"
 }
