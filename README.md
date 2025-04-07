@@ -27,7 +27,7 @@ Geo-redundant backups enable you to restore your server in a different region du
 Read replicas enhance performance and availability by creating copies of the primary server either in the same region or across different Azure regions. In-region replicas can improve read performance, while cross-region replicas protect against regional failures using PostgreSQL's physical replication technology. 
 
 ### High-Availability
-Azure Database for PostgreSQL Flexible Server supports both zone-redundant and zonal models for high-availability configurations, providing automatic failover capabilities without any data loss during planned or unplanned events.
+Azure Database for PostgreSQL flexible Server supports both zone-redundant and zonal models for high-availability configurations, providing automatic failover capabilities without any data loss during planned or unplanned events.
 
 - **Zone-Redundant:** Zone-redundant high availability deploys a standby replica in a different availability zone, enabling automatic failover to maintain service continuity. This configuration delivers the highest level of availability and requires configuring application redundancy across zones. Choose zone redundancy when you require robust protection against availability zone failures and when you can tolerate the associated latency between zones. The zone-redundancy model offers an uptime Service Level Agreement (SLA) of 99.99%.
 
@@ -108,7 +108,7 @@ This configuration includes one primary instance of the Azure PostgreSQL flexibl
 ### 2. Zonal Resilience (With Read Replica)
 This configuration includes one primary instance and two read replicas within the same region. 
  
-This configuration has one instance of Azure PostgreSQL flexible server and two read replicas in same region as that of primary instance. In this type we can configure the "zone" attribute which is specifies the value for Availability zone like we have in the portal. We have 3 Availability zones in Azure PostgreSQL flexible server. The value added here depends on what is the value added for the Primary instance
+This configuration includes a single instance of Azure PostgreSQL flexible server along with two read replicas located in the same region as the primary instance. In this setup, you can configure the "zone" attribute, which specifies the value for the Availability Zone, similar to the options available in the portal. Azure PostgreSQL flexible server offers three Availability Zones. You can select any of 1,2,3 availability zones for your primary instance, a standby instance gets deployed in a different zone than that of primary instance. 
    
 ![screenshot](Images/Flex_ZR-HA_InRegion.png)
 
