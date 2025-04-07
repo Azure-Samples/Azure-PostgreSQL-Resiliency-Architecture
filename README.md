@@ -118,10 +118,12 @@ This architecture supports one primary instance with two read replicas in the sa
 ![screenshot](Images/Flex_ZR-HA_CrossRegion.png)
 
 # Deployment scripts and templates:
-You can use Terraform scripts or JSON templtes to deploy these architectures.
+You can use Terraform scripts or JSON templtes to deploy these architectures. 
+
 
 ## Terraform
 To deploy this solution using Terraform, follow these steps:
+> Note: If you want to use your existing resource-group, remove the resource group block from the "main.tf" file. We have added this block assuming you dont have a resource group created. In the "variables.tf" file edit all the variable names and save the file. 
 
 ### Prerequisites:
 - An Azure account
