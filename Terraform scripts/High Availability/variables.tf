@@ -2,7 +2,7 @@ variable "subscriptionID"{
   default = "<Enter-Your-Subscription-ID>"
 }
 variable "resourceName" {
-  default     = <resource-group-name>"
+  default     = "<resource-group-name>"
   description = "Prefix of the resource name."
 }
 variable "location" {
@@ -41,14 +41,6 @@ variable "privateServiceConnection"{
   default = "<private-service-connection-name>"
   description = "name for private service connection"
 }
-variable "readReplica1"{
-    default="<replica-server1-name>"
-    description="read replica 1"
-}
-variable "readReplica2"{
-    default="<replica-server2-name>"
-    description="read replica 2"
-}
 variable "pgVersion"{
   default="16"
 }
@@ -64,3 +56,10 @@ variable "skuName"{
 variable "sgName"{
   default ="<service-group-name>"
 }
+variable "username"{
+default="<user-name>"
+}
+variable "password"{
+default="<password>"
+}
+
