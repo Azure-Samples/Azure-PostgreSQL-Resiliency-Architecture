@@ -13,15 +13,15 @@ resource "azurerm_resource_group" "default" {
 }
 resource "azurerm_virtual_network" "example" {
   name                = var.virtualNetwork
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
+  location            = var.location
+  resource_group_name = var.resourceName
   address_space       = ["10.0.0.0/16"]
 }
 
 resource "azurerm_network_security_group" "default" {
   name                = var.networkSecurityGroupName
-  location            = azurerm_resource_group.default.location
-  resource_group_name = azurerm_resource_group.default.name
+  location            = var.location
+  resource_group_name = var.resourceName
   security_rule {
     name                       = var.sgName
     priority                   = 100
@@ -37,15 +37,15 @@ resource "azurerm_network_security_group" "default" {
 
 resource "azurerm_subnet" "example" {
   name                 = var.subnetName
-  resource_group_name  = azurerm_resource_group.default.name
+  resource_group_name  = var.resourceName
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.2.0/24"]
 
 }
 resource "azurerm_postgresql_flexible_server" "default" {
   name                          = var.flexibleServeInstance
-  resource_group_name           = azurerm_resource_group.default.name
-  location                      = azurerm_resource_group.default.location
+  location            = var.location
+  resource_group_name = var.resourceName
   version                       = var.pgVersion
   public_network_access_enabled = true
   administrator_login = var.username
@@ -62,7 +62,7 @@ resource "azurerm_postgresql_flexible_server" "default" {
 resource "azurerm_private_endpoint" "example" {
   name                = var.privateEndpointName
   location            = var.location
-  resource_group_name = azurerm_resource_group.default.name
+  resource_group_name = var.resourceName
   subnet_id           = azurerm_subnet.example.id
 
   private_service_connection {
