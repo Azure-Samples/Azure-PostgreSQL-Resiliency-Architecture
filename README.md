@@ -20,6 +20,10 @@ RTO is the maximum acceptable downtime for an application. Different application
 #### 2. Recovery Point Objective (RPO)
 RPO refers to the maximum acceptable amount of data loss measured in time. Assessing how much data loss your business can tolerate in the event of a disruption is vital.
 
+Here is a table that compares RTO and RPO in typical workload scenarios:
+
+![screenshot](Images/RTO.png)
+
 ### Geo-Redundant Backup and Restore
 Geo-redundant backups enable you to restore your server in a different region during a disaster, providing high durability for backup objects. This cost-effective solution requires configuration at server creation and asynchronously copies backup data and transaction logs to a paired region.
 
@@ -45,6 +49,26 @@ For flexible servers configured without high availability, the service provides 
 ![screenshot](Images/withoutHA.png)
 
 # Resiliency Features
+### Zonal Protection
+Zonal protection: We offer an option to host your standby instance in a different zone than the primary instance. You can select this option from the availability zone section on the portal and choose from zones [1, 2, 3]. This ensures that your instance is protected in case of a complete zonal outage. For example, if you select availability zone 1 for the primary instance, the standby instance can be chosen from either zone 2 or 3. Once you make this selection, the WAL server will be created in a zone that is different from both the primary and standby instances.
+
+  **Scenario:**  
+  In case of Zonal outage when its planned like scale computing and scale storage happen on the standby first and then on the primary server. Currently, the server doesn't failover for these planned operations. In case of unplanned failover the standby becomes the new primary and then it creates a new standby in a different zone.
+  
+  **Recommended Actions:**  
+ 1.  Configure HA with Zone redundant option and select the zone for Primary and Standby.
+ 2.  Flexible server health monitoring periodically checks for both the primary and standby health. If health monitoring detects that a primary server isn't reachable, the service then initiates an automatic failover to the standby server. 
+ 3.  Point-in-restore is recommended for user errors on the primary server like accidental drop of a table or incorrect data updates, from the backup. A new database server is restored as a single-zone flexible server with a new user-provided server name. Possible use cases could be:
+    a. Use restored server for production
+    b. Restore an object 
+    c. Clone your database server to testing and development 
+4. Implement monitoring and alerts to ensure timely detection and response. 
+5. Use Private Link for secure and seamless failover.
+     
+**Impact:**  
+  In Azure Database for PostgreSQL flexible server, when you make changes to keys or permissions on the primary server, these changes are typically replicated to any read replicas automatically. This replication includes changes to roles, permissions, and other security settings. Read replicas typically provide near-real-time updates from the primary server, but heavy, persistent write activities can lead to increased replication lag and higher storage usage on the primary due to retained WAL files
+
+> Note: In the event of a zonal outage where an entire zone goes down due to unforeseen circumstances, the standby instance created in a different zone will become the primary instance. However, it is not possible to create a new standby server until the affected zone is restored.
 
 ### Regional Outage Protection
 Azure protects your data against regional outages, ensuring continuity during unforeseen events like disasters. In case of a widespread event, Azure's robust disaster recovery mechanisms can fallback to an alternate region, ensuring reliability.
@@ -59,35 +83,14 @@ Azure protects your data against regional outages, ensuring continuity during un
  2.  Set up cross-region replication for disaster recovery.
  3.  Implement geo-redundant configurations.
  4.  Ensure automated backups with configurable retention periods.
- 5.  Create Virtual Endpoints. These are read-write and read-only listener endpoints, that remain consistent irrespective of the current role of the Azure Database for PostgreSQL flexible server instance
+ 5.  Use private link and create Virtual Endpoints. These are read-write and read-only listener endpoints, that remain consistent irrespective of the current role of the Azure Database for PostgreSQL flexible server instance
     a. Using Virtual EndPoint with Read Replica:
         The read-only endpoint will point to the new replica which was the former primary 
     b. Use Virtual EndPoint in Parity with Read Replica to failover and failback between replicas
 6.  With geo-redundant backup, you can perform a geo-restore in the paired region during an outage, creating a new server with the last available data. Cross-region read replicas can also be promoted to standalone read-write servers during regional failures, with an RPO of up to 5 minutes.
    
  **Impact** \
-  In Azure Database for PostgreSQL flexible server, when you make changes to keys or permissions on the primary server, these changes are typically replicated to any read replicas automatically. This replication includes changes to roles, permissions, and other security settings. Read replicas typically provide near-real-time updates from the primary server, but heavy, persistent write activities can lead to increased replication lag and higher storage usage on the primary due to retained WAL files
-
-### Zonal Protection
-Zonal protection: We offer an option to host your standby instance in a different zone than the primary instance. You can select this option from the availability zone section on the portal and choose from zones [1, 2, 3]. This ensures that your instance is protected in case of a complete zonal outage. For example, if you select availability zone 1 for the primary instance, the standby instance can be chosen from either zone 2 or 3. Once you make this selection, the WAL server will be created in a zone that is different from both the primary and standby instances.
-
-  **Scenario:**  
-  In case of Zonal outage when its Planned like scale computing and scale storage happen on the standby first and then on the primary server. Currently, the server doesn't failover for these planned operations. In case of unplanned failover the standby becomes the new primary and then it creates a new standby in a different zone.
-  
-  **Recommended Actions:**  
- 1.  Configure HA with Zone redundant option and select the zone for Primary and Standby.
- 2.  Flexible server health monitoring periodically checks for both the primary and standby health. If health monitoring detects that a primary server isn't reachable, the service then initiates an automatic failover to the standby server. 
- 3.  Point-in-restore is recommended for user errors on the primary server like accidental drop of a table or incorrect data updates, from the backup. A new database server is restored as a single-zone flexible server with a new user-provided server name. Possible use cases could be:
-    a. Use restored server for production
-    b. Restore an object 
-    c. Clone your database server to testing and development 
-4. Implement monitoring and alerts to ensure timely detection and response. 
-5. Use Virtual Network (VNet) integration or Private Link for secure and seamless failover.
-     
-**Impact:**  
-  In Azure Database for PostgreSQL flexible server, when you make changes to keys or permissions on the primary server, these changes are typically replicated to any read replicas automatically. This replication includes changes to roles, permissions, and other security settings. Read replicas typically provide near-real-time updates from the primary server, but heavy, persistent write activities can lead to increased replication lag and higher storage usage on the primary due to retained WAL files
-
-> Note: In the event of a zonal outage where an entire zone goes down due to unforeseen circumstances, the standby instance created in a different zone will become the primary instance. However, it is not possible to create a new standby server until the affected zone is restored.
+  In Azure Database for PostgreSQL flexible server, when you make changes to keys or permissions on the primary server, these changes are typically replicated to any read replicas automatically. This replication includes changes to roles, permissions, and other security settings. Read replicas typically provide near-real-time updates from the primary server, but heavy, persistent write activities can lead to increased replication lag and higher storage usage on the primary due to retained WAL files.
 
 # Reference Architectures
 In this architecture we recommend using Private endpoint for the Azure Database for PostgreSQL instance. A private endpoint adds a network interface to a resource, providing it with a private IP address assigned from your virtual network. After it's applied, you can communicate with this resource exclusively via the virtual network. Please read more about benefits of using Private link [here](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-networking-private-link). 
@@ -98,7 +101,7 @@ This configuration includes one primary instance of the Azure PostgreSQL flexibl
    
    - **ZoneRedundant:** Deploying standby in different zone.
 
-      ![screenshot](Images/Azure-PostgreSQL-Reslience-Architecture-v1.1.png)
+      ![screenshot](Images/HAwithoutrr.png)
          
    - **Same Zone:** Deploying standby instance in the same zone as that of primary 
 
@@ -110,12 +113,12 @@ This configuration includes one primary instance and two read replicas within th
  
 This configuration has one instance of Azure PostgreSQL flexible server and two read replicas in same region as that of primary instance. In this type we can configure the "zone" attribute which is specifies the value for Availability zone like we have in the portal. We have 3 Availability zones in Azure PostgreSQL flexible server. The value added here depends on what is the value added for the Primary instance
    
-![screenshot](Images/Flex_ZR-HA_InRegion.png)
+![screenshot](Images/zonal.png)
 
 ### 3. Regional Resilience
 This architecture supports one primary instance with two read replicas in the same region and three additional read replicas in a different region. Azure PostgreSQL supports deployment of 5 read replicas in any region. In this type of configuration we have 2 read replicas in the same region as that of primary and three read replicas are deployed in a different region to that of the primary server. 
 
-![screenshot](Images/Flex_ZR-HA_CrossRegion.png)
+![screenshot](Images/crossregion.png)
 
 # Deployment scripts and templates:
 You can use Terraform scripts or JSON templtes to deploy these architectures. 
