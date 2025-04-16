@@ -70,3 +70,6 @@ variable "username" {
 variable "password"{
   default="<password>"
 }
+variable "virtualepdemo"{
+  default="<demovirtualep>"
+}

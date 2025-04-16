@@ -66,7 +66,7 @@ resource "azurerm_postgresql_flexible_server" "default" {
   resource_group_name           = var.resourceName
   location                      = var.location
   version                       = var.pgVersion
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   administrator_login = var.username
   administrator_password = var.password
   high_availability {
@@ -87,7 +87,7 @@ resource "azurerm_postgresql_flexible_server" "replicaserver1" {
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = var.pgVersion
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   storage_mb                    = var.storage
   storage_tier                  = var.storageTier
   sku_name                      = var.skuName
@@ -102,7 +102,7 @@ resource "azurerm_postgresql_flexible_server" "replicaserver2" {
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = "16"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   storage_mb                    = var.storage
   storage_tier                  = var.storageTier
   sku_name                      = var.skuName
@@ -122,4 +122,11 @@ resource "azurerm_private_endpoint" "example" {
   }
 
   depends_on = [azurerm_postgresql_flexible_server.default, azurerm_subnet.example,azurerm_postgresql_flexible_server.replicaserver1]
+}
+resource "azurerm_postgresql_flexible_server_virtual_endpoint" "demovirtualendpoint" {
+  name              = var.virtualepdemo
+  source_server_id  = azurerm_postgresql_flexible_server.default.id
+  replica_server_id = azurerm_postgresql_flexible_server.replicaserver1.id
+  type              = "ReadWrite"
+  depends_on = [azurerm_postgresql_flexible_server.default, azurerm_postgresql_flexible_server.replicaserver1]
 }

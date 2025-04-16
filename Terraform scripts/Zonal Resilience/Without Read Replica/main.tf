@@ -53,7 +53,6 @@ resource "azurerm_postgresql_flexible_server" "default" {
   high_availability {
     mode                      = "ZoneRedundant"
   }
-
   storage_mb                    = var.storage
   storage_tier                  = var.storageTier
   sku_name                      = var.skuName
@@ -64,7 +63,6 @@ resource "azurerm_private_endpoint" "example" {
   location            = var.location
   resource_group_name = var.resourceName
   subnet_id           = azurerm_subnet.example.id
-
   private_service_connection {
     name                              = var.privateServiceConnection
     private_connection_resource_id    = azurerm_postgresql_flexible_server.default.id

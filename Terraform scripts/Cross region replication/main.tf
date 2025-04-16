@@ -62,13 +62,12 @@ resource "azurerm_postgresql_flexible_server" "default" {
  location            = var.location
   resource_group_name = var.resourceName
   version                       = var.pgVersion
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   administrator_login = var.username
   administrator_password = random_password.password.result
   high_availability {
     mode                      = "ZoneRedundant"
   }
-
   storage_mb                    = var.storage
   storage_tier                  = var.storageTier
   sku_name                      = var.skuName
@@ -82,8 +81,7 @@ resource "azurerm_postgresql_flexible_server" "replicaserver1" {
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = "16"
-  public_network_access_enabled = false
-
+  public_network_access_enabled = true
   zone                          = "1"
   storage_mb                    = 32768
   storage_tier                  = "P30"
@@ -99,8 +97,7 @@ resource "azurerm_postgresql_flexible_server" "replicaserver2" {
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = "16"
-  public_network_access_enabled = false
-
+  public_network_access_enabled = true
   zone                          = "1"
   storage_mb                    = 32768
   storage_tier                  = "P30"
@@ -116,7 +113,7 @@ resource "azurerm_postgresql_flexible_server" "crossregionreplica1" {
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = "16"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   storage_mb                    = 32768
   storage_tier                  = "P30"
   sku_name                      = "GP_Standard_D2ads_v5"
@@ -130,7 +127,7 @@ resource "azurerm_postgresql_flexible_server" "crossregionreplica2" {
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = "16"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   storage_mb                    = 32768
   storage_tier                  = "P30"
   sku_name                      = "GP_Standard_D2ads_v5"
@@ -145,7 +142,7 @@ resource "azurerm_postgresql_flexible_server" "crossregionreplica3" {
   create_mode                   = "Replica"
   source_server_id              = azurerm_postgresql_flexible_server.default.id
   version                       = "16"
-  public_network_access_enabled = false
+  public_network_access_enabled = true
   storage_mb                    = 32768
   storage_tier                  = "P30"
   sku_name                      = "GP_Standard_D2ads_v5"
@@ -166,4 +163,12 @@ resource "azurerm_private_endpoint" "example" {
   }
 
   depends_on = [azurerm_postgresql_flexible_server.default, azurerm_subnet.example,azurerm_postgresql_flexible_server.replicaserver1, azurerm_postgresql_flexible_server.crossregionreplica1,azurerm_postgresql_flexible_server.crossregionreplica2,azurerm_postgresql_flexible_server.crossregionreplica3]
+}
+resource "azurerm_postgresql_flexible_server_virtual_endpoint" "demovirtualendpoint" {
+  name              = var.virtualepdemo
+  source_server_id  = azurerm_postgresql_flexible_server.default.id
+  replica_server_id = azurerm_postgresql_flexible_server.crossregionreplica1.id
+  type              = "ReadWrite"
+  depends_on = [azurerm_postgresql_flexible_server.default, azurerm_postgresql_flexible_server.crossregionreplica1]
+
 }
