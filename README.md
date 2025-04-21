@@ -109,8 +109,8 @@ This configuration includes one primary instance of the Azure PostgreSQL flexibl
 This configuration includes one primary instance and two read replicas within the same region. 
  
 This configuration includes a single instance of Azure PostgreSQL flexible server along with two read replicas located in the same region as the primary instance. In this setup, you can configure the "zone" attribute, which specifies the value for the Availability Zone, similar to the options available in the portal. Azure PostgreSQL flexible server offers three Availability Zones. You can select any of 1,2,3 availability zones for your primary instance, a standby instance gets deployed in a different zone than that of primary instance. 
-   
-![screenshot](Images/Flex_ZR-HA_InRegion.png)
+
+![screenshot](Images/zonal.png)
 
 ### 3. Regional Resilience
 This architecture supports one primary instance with two read replicas in the same region and three additional read replicas in a different region. Azure PostgreSQL supports deployment of 5 read replicas in any region. In this type of configuration we have 2 read replicas in the same region as that of primary and three read replicas are deployed in a different region to that of the primary server. 
