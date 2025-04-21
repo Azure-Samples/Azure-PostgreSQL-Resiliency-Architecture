@@ -115,7 +115,7 @@ This configuration includes a single instance of Azure PostgreSQL flexible serve
 ### 3. Regional Resilience
 This architecture supports one primary instance with two read replicas in the same region and three additional read replicas in a different region. Azure PostgreSQL supports deployment of 5 read replicas in any region. In this type of configuration we have 2 read replicas in the same region as that of primary and three read replicas are deployed in a different region to that of the primary server. 
 
-![screenshot](Images/Flex_ZR-HA_CrossRegion.png)
+![screenshot](Images/Cross-zone-ve.png)
 
 # Deployment scripts and templates:
 You can use Terraform scripts or JSON templtes to deploy these architectures. 
