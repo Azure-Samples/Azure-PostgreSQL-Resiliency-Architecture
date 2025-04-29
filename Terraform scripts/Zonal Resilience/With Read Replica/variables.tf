@@ -70,3 +70,6 @@ variable "username" {
 variable "password"{
   default="<password>"
 }
+variable "virtualendpoint"{
+  default="<virtualendpointname>"
+}
