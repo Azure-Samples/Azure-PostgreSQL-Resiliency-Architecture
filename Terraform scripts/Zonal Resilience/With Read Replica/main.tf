@@ -123,3 +123,11 @@ resource "azurerm_private_endpoint" "example" {
 
   depends_on = [azurerm_postgresql_flexible_server.default, azurerm_subnet.example,azurerm_postgresql_flexible_server.replicaserver1]
 }
+resource "azurerm_postgresql_flexible_server_virtual_endpoint" "example1" {
+  name              = var.virtualendpoint
+  source_server_id  = var.flexibleServeInstance
+  replica_server_id = var.readReplica1
+  type              = "ReadWrite"
+  depends_on = [azurerm_postgresql_flexible_server.default, azurerm_postgresql_flexible_server.replicaserver1]
+
+}
