@@ -90,3 +90,6 @@ variable "username" {
 variable "password"{
   default="<password>"
 }
+variable "virtualendpoint"{
+  default="<virtual-endpoint-name>"
+}
