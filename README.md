@@ -98,7 +98,7 @@ This configuration includes one primary instance of the Azure PostgreSQL flexibl
    
 **ZoneRedundant:** Deploying standby in different zone.
 
-      ![screenshot](Images/Azure-PostgreSQL-Reslience-Architecture-v1.1.png)
+![screenshot](Images/Azure-PostgreSQL-Reslience-Architecture-v1.1.png)
 
          
 ### 2. Zonal Resilience (With Read Replica)
