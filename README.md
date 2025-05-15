@@ -94,13 +94,16 @@ In this architecture we recommend using Private endpoint for the Azure Database 
 Three variants exist in the Azure Database for PostgreSQL resiliency architecture:
 
 ### 1. Zonal Resilience (Without Read Replica)
-This configuration includes one primary instance of the Azure PostgreSQL flexible server with high availability enabled. In this configuration, enabling high availability for the instance allows us to deploy the standby instance using two options by modifying the "mode" attribute. This attribute can take two possible values:
+This configuration includes one primary instance of the Azure PostgreSQL flexible server with high availability enabled. In this configuration, enabling high availability for the instance allows us to deploy the standby instance using two options by modifying the "mode" attribute. This attribute can have either "ZoneRedundant" or "SameZone" value.
    
-**ZoneRedundant:** Deploying standby in different zone.
+**Zone Resilient:** Deploying standby in different zone.
 
 ![screenshot](Images/without-Read-Replica.png)
 
-         
+ **Zone Resilient with Geo-redundant backups:** Deploying standby in a different zone along with Geo-redundant backup storage. This option can be enabled while creating an instance of flexible server.
+
+ ![screenshot](Images/zone-redundant-geo-replica.png)
+ 
 ### 2. Zonal Resilience (With Read Replica)
 This configuration includes one primary instance and two read replicas within the same region. 
  
