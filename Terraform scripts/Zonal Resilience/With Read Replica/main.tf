@@ -73,7 +73,7 @@ resource "azurerm_postgresql_flexible_server" "default" {
     mode                      = "ZoneRedundant"
   }
 
- 
+  geo_redundant_backup_enabled = true
   storage_mb                    = var.storage
   storage_tier                  = var.storageTier
   sku_name                      = var.skuName
