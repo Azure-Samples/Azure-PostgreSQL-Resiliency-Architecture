@@ -107,12 +107,12 @@ This configuration includes one primary instance of the Azure PostgreSQL flexibl
 ### 2. Zonal Resilience (With Read Replica)
 This configuration includes one primary instance and two read replicas within the same region. 
  
-This configuration includes a single instance of Azure PostgreSQL flexible server along with two read replicas located in the same region as the primary instance. In this setup, you can configure the "zone" attribute, which specifies the value for the Availability Zone, similar to the options available in the portal. Azure PostgreSQL flexible server offers three Availability Zones. You can select any of 1,2,3 availability zones for your primary instance, a standby instance gets deployed in a different zone than that of primary instance. 
+This configuration includes an instance of Azure PostgreSQL flexible server with HA enabled with one read replica in the same region as the primary instance. In this setup, you can configure the "zone" attribute, which specifies the value for the Availability Zone, similar to the options available in the portal. Azure PostgreSQL flexible server offers three Availability Zones. You can select any of 1,2,3 availability zones for your primary instance, a standby instance gets deployed in a different zone than that of primary instance. 
 
 ![screenshot](Images/inregion-readreplica.png)
 
 ### 3. Regional Resilience
-This architecture supports one primary instance with two read replicas in the same region and three additional read replicas in a different region. Azure PostgreSQL supports deployment of 5 read replicas in any region. In this type of configuration we have 2 read replicas in the same region as that of primary and three read replicas are deployed in a different region to that of the primary server. 
+This architecture supports one primary instance with HA enabled and one read replica in the same region and one read replicas in a different region. Azure PostgreSQL supports deployment of 5 read replicas in any region, you can add more read replicas to different regions to make it more region resilient.
 
 ![screenshot](Images/cross-regionreadreplica.png)
 
@@ -176,30 +176,3 @@ Navigate to the Terraform scripts folder, where you'll find separate folders for
    This command will apply the generated terraform plan:
    ```sh
     terraform apply <file-name>.tfplan
-
-## Deploy with JSON script:
-
-You can click the link for each of the architectures to deploy them.
-
-### 1. Zonal Resilience (without Read Replica):
-
-   - **ZoneRedundant:** Deploying standby in different zone. This architecture ensures high availability by deploying the standby instance in a different zone from the primary instance. This setup helps to protect against zone-level failures and provides resilience.
-
-      [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fzoneredundanttemplate.json) 
-   
-         
-   - **Same Zone:** Deploying standby instance in the same zone as that of primary. This architecture provides high availability by deploying the standby instance in the same zone as the primary instance. It is suitable for scenarios where zone-level redundancy is not required but high availability within the same zone is needed. 
-   [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fsamezonetemplate.json)
-
-
-### 2. Zonal Resilience (with Read Replica)
-This architecture enhances resilience by deploying read replicas in different zones. Read replicas help to offload read operations from the primary instance, improving performance and availability. This setup is ideal for read-heavy workloads and provides zone-level redundancy.
-
-   [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Freadreplica.json)
-   
-
-### 3. Regional Resilience
-This architecture provides regional resilience by deploying instances across different regions. It ensures high availability and disaster recovery by replicating data across regions. This setup is suitable for mission-critical applications that require protection against regional failures and ensures business continuity. You need to deploy multiple instances of read replica in different regions as that of Primary.
-
-   [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2FAzure-PostgreSQL-Resilience-Architecture%2Frefs%2Fheads%2Fdemotemplate%2Fsetup%2Fpostgresinfra%2Fcrossregionreplica.json)
-
