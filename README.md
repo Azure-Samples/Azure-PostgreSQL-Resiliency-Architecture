@@ -1,15 +1,14 @@
 # Azure Database for PostgreSQL Resiliency Solution Accelerator
 
 # Introduction
-We are excited to launch the solution accelerator for deploying Azure Database for PostgreSQL flexible server's resiliency architecture. The architecture is designed to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. This guide includes Terraform scripts and JSON templates to deploy these architectures quickly and efficiently.
+We are excited to launch the solution accelerator for deploying Azure Database for PostgreSQL flexible server's resiliency architecture. The architecture is designed to protect data and minimize downtime for mission-critical databases during both planned and unplanned events. This guide includes Terraform scripts to deploy these architectures quickly and efficiently.
 
 # Table of Content
 * [Business Continuity Features](#business-continuity-features)
 * [Recommended actions to achieve resiliency](#recommended-actions-to-achieve-resiliency)
 * [Reference Architectures](#reference-architectures)
-* [Deployment scripts and templates](#deployment-scripts-and-templates)
-     1. [Deploy with Terraform](terraform)
-     2. [Deploy with JSON Script](deploy-with-json-script)
+* [Deploy Terraform scripts](#deploy-terraform-scripts)
+ 
 
 # Business Continuity Features
 Azure Database for PostgreSQL flexible server is built on a resilient Azure infrastructure, incorporating features essential for ensuring high availability and fault tolerance, ensuring your databases remain operational. When architecting applications, it is critical to consider the following objectives:
@@ -90,71 +89,68 @@ Zonal protection: We offer an option to host your standby instance in a differen
 > Note: In the event of a zonal outage where an entire zone goes down due to unforeseen circumstances, the standby instance created in a different zone will become the primary instance. However, it is not possible to create a new standby server until the affected zone is restored.
 
 # Reference Architectures
-In this architecture we recommend using Private endpoint for the Azure Database for PostgreSQL instance. A private endpoint adds a network interface to a resource, providing it with a private IP address assigned from your virtual network. After it's applied, you can communicate with this resource exclusively via the virtual network. Please read more about benefits of using Private link [here](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-networking-private-link). 
+In this architecture we recommend using Private endpoint for the Azure Database for PostgreSQL instance. A private endpoint adds a network interface to a resource, providing it with a private IP address assigned from your virtual network. After it's applied, you can communicate with this resource exclusively via the virtual network. Please read more about [benefits of using Private link](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-networking-private-link). 
 Three variants exist in the Azure Database for PostgreSQL resiliency architecture:
 
-### 1. Zonal Resilience (Without Read Replica)
-This configuration includes one primary instance of the Azure PostgreSQL flexible server with high availability enabled. In this configuration, enabling high availability for the instance allows us to deploy the standby instance using two options by modifying the "mode" attribute. This attribute can have either "ZoneRedundant" or "SameZone" value.
-   
-**Zone Resilient:** Deploying standby in different zone.
+### 1. Zonal resilience (without read replica)
+This configuration includes one primary instance of the Azure PostgreSQL flexible server with high availability enabled. In this configuration, enabling high availability for the instance allows you to deploy the standby instance using two options, by modifying the "mode" attribute. This attribute can have either "ZoneRedundant" or "SameZone" value.
+
+**Zone resilient:** Deploying standby in different zone.
 
 ![screenshot](Images/zoneredundant1.png)
 
- **Zone Resilient with Geo-redundant backups:** Deploying standby in a different zone along with Geo-redundant backup storage. This option can be enabled while creating an instance of flexible server.
+**Zone resilient with geographically redundant backups:** Deploying standby in a different zone, along with geographically redundant backups. This option can be enabled while creating an instance of flexible server.
 
- ![screenshot](Images/zonalresilience.png)
- 
-### 2. Zonal Resilience (With Read Replica)
-This configuration includes one primary instance and two read replicas within the same region. 
- 
-This configuration includes an instance of Azure PostgreSQL flexible server with HA enabled with one read replica in the same region as the primary instance. In this setup, you can configure the "zone" attribute, which specifies the value for the Availability Zone, similar to the options available in the portal. Azure PostgreSQL flexible server offers three Availability Zones. You can select any of 1,2,3 availability zones for your primary instance, a standby instance gets deployed in a different zone than that of primary instance. 
+![screenshot](Images/zonalresilience.png)
+
+### 2. Zonal resilience (with read replica)
+This configuration includes one primary instance and one read replica within the same region. 
+
+This configuration includes an instance of Azure PostgreSQL flexible server with high availability enabled, with one read replica in the same region as the primary instance. In this setup, you can configure the "zone" attribute, which specifies the value for the availability zone, similar to the options available in the portal. In regions where it's supported, Azure PostgreSQL flexible server offers three availability zones. You can select any of 1,2,3 availability zones for your primary instance, a standby instance gets deployed in a different zone than that of primary instance. 
 
 ![screenshot](Images/inregion-readreplica.png)
 
-### 3. Regional Resilience
-This architecture supports one primary instance with HA enabled and one read replica in the same region and one read replicas in a different region. Azure PostgreSQL supports deployment of 5 read replicas in any region, you can add more read replicas to different regions to make it more region resilient.
+### 3. Regional resilience
+This architecture supports one primary instance with high availability enabled, and one read replica in the same region and another read replica in a different region. Azure PostgreSQL supports deployment of up to five read replicas on any region. You can add more read replicas to different regions, to make it more region resilient.
 
 ![screenshot](Images/cross-regionreadreplica.png)
 
-# Deployment scripts and templates:
-You can use Terraform scripts or JSON templtes to deploy these architectures. 
+# Deploy terraform scripts
+You can use Terraform scripts to deploy these architectures.
 
-
-## Terraform
 To deploy this solution using Terraform, follow these steps:
-> Note: If you want to use your existing resource-group, remove the resource group block from the "main.tf" file. We have added this block assuming you dont have a resource group created. In the "variables.tf" file edit all the variable names and save the file. 
+> Note: If you want to use your existing resource group, remove the resource group block from the "main.tf" file. We have added this block assuming you dont have a resource group created. In the "variables.tf" file edit all the variable names and save the file. 
 
-### Prerequisites:
-- An Azure account
-- Azure CLI installed on your local terminal
-- Terraform installed
+### Prerequisites
+- An Azure account.
+- Azure CLI installed on your local terminal.
+- Terraform installed.
 
-### Deployment Steps:
+### Deployment steps
 
-1. **Open Azure CLI**: For this solution accelerator, we are utilizing Azure Cloud Shell. You can launch the Azure portal and access the Cloud Shell, or alternatively, use a local terminal with Azure CLI installed.
+1. **Open your terminal in which you have Azure CLI installed**: For this solution accelerator, we are utilizing Azure Cloud Shell. You can launch the Azure portal and access the Cloud Shell, or alternatively, use a local terminal with Azure CLI installed.
 
-2. **Set Account Subscription**: 
+2. **Set account subscription**
 
    Set your Azure subscription using the following command:
    ```sh
    az account set --subscription <subscription-name>
    ```
-3.  **Upload Terraform Files**: Upload the necessary Terraform files.
+3.  **Upload Terraform files**: Upload the necessary Terraform files. This step is only necessary if you're using Azure Cloud Shell or some other remote terminal.
 
 ### Execute Different Versions of Terraform Files:
 
-   - **Zonal Resilience (Without Read Replica)**:
+   - **Zonal Resilience (Without read replica)**:
 
       This has a script that deploys Azure PostgreSQL flexible server instance with high avaliability enabled. Edit the "variables.tf" file with your subscription-id, desired names, version and etc. for all the resources.
 
-   - **Zonal Resilience (With Read Replica)**:
+   - **Zonal Resilience (With read replica)**:
 
-     Modify the variables in the two provided files: "variables.tf" and "main.tf". On "variables.tf" please add values to different attributes; on the second file "main.tf", find all the modules and resources that are deployed with two read replicas in the same region as that of the primary instance.
+     Modify the variables in the two provided files: "variables.tf" and "main.tf". On "variables.tf" please add values to different attributes; on the second file "main.tf", find all the modules and resources that are deployed with one read replicas in the same region as that of the primary instance.
    
   - **Regional Resilience**:
    
-    Similar to the above, edit the necessary files to reflect your configuration
-    On "variables.tf" please add values to different attributes; on the second file "main.tf"find all the modules and resources that are deployed with two read replicas in the same region as that of the primary instance and the 3 read replicas in a different region as that of Primary instance.
+    Similar to the above, edit the necessary files to reflect your configuration. On "variables.tf" please add values to different attributes; on the second file "main.tf"find all the modules and resources that are deployed with one read replica in the same region as that of the primary instance and the another read replica in a different region as that of Primary instance.
 
 ### Running the Terraform Script:    
 
