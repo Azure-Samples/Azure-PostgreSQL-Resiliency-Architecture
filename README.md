@@ -14,7 +14,7 @@ We are excited to launch the solution accelerator for deploying Azure Database f
 Azure Database for PostgreSQL flexible server is built on a resilient Azure infrastructure, incorporating features essential for ensuring high availability and fault tolerance, ensuring your databases remain operational. When architecting applications, it is critical to consider the following objectives:
 
 #### 1. Recovery Time Objective (RTO)
-RTO is the maximum acceptable downtime for an application. Different applications have varying tolerance levels—for instance, a business-critical database demands much stricter uptime compared to a test database.
+RTO is the maximum acceptable downtime for an application. Different applications have varying tolerance levels for instance, a business-critical database demands much stricter uptime compared to a test database.
 
 #### 2. Recovery Point Objective (RPO)
 RPO refers to the maximum acceptable amount of data loss measured in time. Assessing how much data loss your business can tolerate in the event of a disruption is vital.
@@ -93,25 +93,23 @@ In this architecture we recommend using Private endpoint for the Azure Database 
 Three variants exist in the Azure Database for PostgreSQL resiliency architecture:
 
 ### 1. Zonal resilience (without read replica)
-This configuration includes one primary instance of the Azure PostgreSQL flexible server with high availability enabled. In this configuration, enabling high availability for the instance allows you to deploy the standby instance using two options, by modifying the "mode" attribute. This attribute can have either "ZoneRedundant" or "SameZone" value.
+This architecture provisions Azure Database for PostgreSQL flexible server with high availability enabled using the "Zone-Redundant" option. The primary and standby instances are deployed in different availability zones, ensuring resilience against zonal failures. With this configuration, you achieve a Recovery Point Objective (RPO) of zero and a Recovery Time Objective (RTO) of less than 120 seconds. Zone-redundant high availability provides automatic failover, robust protection from zonal outages, and high service-level agreements (SLAs), making it an ideal choice for mission-critical workloads.
 
-**Zone resilient:** Deploying standby in different zone.
+**Zone resilient:** Deploying a standby instance in a different availability zone ensures high availability and protection against zonal failures. This configuration also maintains three copies of your data within the region, providing additional redundancy and data durability.
 
-![screenshot](Images/zoneredundant1.png)
+![screenshot](Images/withoutgeobackup.png)
 
-**Zone resilient with geographically redundant backups:** Deploying standby in a different zone, along with geographically redundant backups. This option can be enabled while creating an instance of flexible server.
+**Zone resilience with geo-redundant backups:** Deploying a standby instance in a different availability zone and enabling geo-redundant backups provides robust protection against both zonal and regional failures. Geo-redundant backups, configured during flexible server creation, ensure data is securely replicated to a paired region. This configuration strengthens disaster recovery capabilities and supports business continuity during major outages.
 
 ![screenshot](Images/zonalresilience.png)
 
 ### 2. Zonal resilience (with read replica)
-This configuration includes one primary instance and one read replica within the same region. 
-
-This configuration includes an instance of Azure PostgreSQL flexible server with high availability enabled, with one read replica in the same region as the primary instance. In this setup, you can configure the "zone" attribute, which specifies the value for the availability zone, similar to the options available in the portal. In regions where it's supported, Azure PostgreSQL flexible server offers three availability zones. You can select any of 1,2,3 availability zones for your primary instance, a standby instance gets deployed in a different zone than that of primary instance. 
+This configuration deploys a flexible server instance with High Availability enabled using the "ZoneRedundant" option, geo-redundant backups, and a read replica in the same region as the primary. This setup provides protection against zonal outages and supports scaling out read-heavy workloads by directing read traffic to the replica through virtual endpoints.
 
 ![screenshot](Images/inregion-readreplica.png)
 
 ### 3. Regional resilience
-This architecture supports one primary instance with high availability enabled, and one read replica in the same region and another read replica in a different region. Azure PostgreSQL supports deployment of up to five read replicas on any region. You can add more read replicas to different regions, to make it more region resilient.
+This architecture deploys a flexible server instance with High Availability enabled using the "ZoneRedundant" option and geo-redundant backups configured at server creation. It provisions one read replica in the same region as the primary server but in a different zone, along with another read replica in a different region. This setup ensures protection against both zonal and regional outages. The cross-region read replica supports a robust disaster recovery strategy, maintaining a Recovery Point Objective (RPO) of less than 5 minutes. In the event of a regional failover, the cross-region read replica can be promoted to serve as the new primary instance, enabling applications to remain operational with minimal downtime. This architecture offers the highest level of resiliency, covering all failure scenarios from zonal to regional outages, making it well suited for mission-critical workloads.
 
 ![screenshot](Images/cross-regionreadreplica.png)
 

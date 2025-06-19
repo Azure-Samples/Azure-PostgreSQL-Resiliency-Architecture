@@ -1,21 +1,17 @@
 variable "subscriptionID"{
   default = "<Enter-Your-Subscription-ID>"
 }
-variable "resourceName" {
+variable "resourceGroup" {
   default     = "<resource-group-name>"
   description = "Prefix of the resource name."
 }
 variable "location" {
   default     = "<region>"
-  description = "region of the resource group."
+  description = "Region of the resource group."
 }  
 variable "virtualNetwork"{
   default ="<vnet-name>"
   description="region name for the resource"
-}
-variable "networkSecurityGroupName"{
-  default="<nsg-name>"
-  description="security group name"
 }
 variable "subnetName"{
   default ="<subnet-name>"
@@ -35,6 +31,7 @@ variable "privateServiceConnection"{
 }
 variable "username"{
     default="<username>"
+
 }
 variable "pgVersion"{
   default="16"

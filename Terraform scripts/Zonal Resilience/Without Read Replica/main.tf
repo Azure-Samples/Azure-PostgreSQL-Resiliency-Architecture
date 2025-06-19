@@ -8,36 +8,19 @@ resource "random_password" "password" {
   override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 resource "azurerm_resource_group" "default" {
-  name     = var.resourceName
+  name     = var.resourceGroup
   location = var.location
 }
 resource "azurerm_virtual_network" "example" {
   name                = var.virtualNetwork
   location            = var.location
-  resource_group_name = var.resourceName
+  resource_group_name = var.resourceGroup
   address_space       = ["10.0.0.0/16"]
-}
-
-resource "azurerm_network_security_group" "default" {
-  name                = var.networkSecurityGroupName
-  location            = var.location
-  resource_group_name = var.resourceName
-  security_rule {
-    name                       = var.sgName
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "*"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
 }
 
 resource "azurerm_subnet" "example" {
   name                 = var.subnetName
-  resource_group_name  = var.resourceName
+  resource_group_name  = var.resourceGroup
   virtual_network_name = azurerm_virtual_network.example.name
   address_prefixes     = ["10.0.2.0/24"]
 
@@ -45,7 +28,7 @@ resource "azurerm_subnet" "example" {
 resource "azurerm_postgresql_flexible_server" "default" {
   name                          = var.flexibleServeInstance
   location            = var.location
-  resource_group_name = var.resourceName
+  resource_group_name = var.resourceGroup
   version                       = var.pgVersion
   public_network_access_enabled = true
   administrator_login = var.username
@@ -62,7 +45,7 @@ resource "azurerm_postgresql_flexible_server" "default" {
 resource "azurerm_private_endpoint" "example" {
   name                = var.privateEndpointName
   location            = var.location
-  resource_group_name = var.resourceName
+  resource_group_name = var.resourceGroup
   subnet_id           = azurerm_subnet.example.id
 
   private_service_connection {

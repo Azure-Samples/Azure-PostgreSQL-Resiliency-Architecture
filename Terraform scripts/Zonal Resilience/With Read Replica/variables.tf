@@ -1,7 +1,7 @@
 variable "subscriptionID"{
   default = "<Enter-Your-Subscription-ID>"
 }
-variable "resourceName" {
+variable "resourceGroup" {
   default     = "<resource-group-name>"
   description = "Prefix of the resource name."
 }
@@ -13,21 +13,9 @@ variable "virtualNetwork"{
   default ="<vnet-name>"
   description="region name for the resource"
 }
-variable "networkSecurityGroupName"{
-  default="<nsg-name>"
-  description="security group name"
-}
 variable "subnetName"{
   default ="<subnet-name>"
   description="subnet name"
-}
-variable "privateDNSZone"{
-  default="<private-dns-name>.postgres.database.azure.com"
-  description = "name for Private DNS Zone"
-}
-variable "privateDNSZoneNetworkLink"{
-  default ="<private-DNS-network-link>.com"
-  description="nName for DNS Zone Link"
 }
 variable "flexibleServeInstance"{
   default ="<flex-server-name>"
@@ -45,9 +33,13 @@ variable "readReplica1"{
     default="<replica-server1-name>"
     description="read replica 1"
 }
-variable "readReplica2"{
-    default="<replica-server2-name>"
-    description="read replica 2"
+variable "username"{
+    default="<username>"
+
+}
+variable "location2"{
+  default="<cross-regionreplica-region>"
+  description="Select a different region than primary instance"
 }
 variable "pgVersion"{
   default="16"
