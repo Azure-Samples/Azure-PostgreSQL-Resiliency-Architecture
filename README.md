@@ -34,10 +34,10 @@ Azure Database for PostgreSQL flexible Server supports both zone-redundant and z
 In both zone-redundant and zonal models, automatic backups are periodically performed from the primary database server, while transaction logs are continuously archived from the standby replica. If the region supports availability zones, backup data will be stored on zone-redundant storage (ZRS). In regions without availability zone support, backup data is stored on local redundant storage (LRS)
 
 ### Backup and restore 
-Backups form an essential part of any business continuity strategy. They help protect data from accidental corruption or deletion. Azure Database for PostgreSQL Flexible Server takes snapshot backups of data files and stores them securely in zone-redundant storage or locally redundant storage, depending on the region. The server also backs up transaction logs when the write-ahead log (WAL) file is ready to be archived. You can use these backups to restore a server to any point in time within your configured backup retention period.
+Backups form an essential part of any business continuity strategy. They help protect data from accidental corruption or deletion. Azure Database for PostgreSQL flexible Server takes snapshot backups of data files and stores them securely in zone-redundant storage or locally redundant storage, depending on the region. The server also backs up transaction logs when the write-ahead log (WAL) file is ready to be archived. You can use these backups to restore a server to any point in time within your configured backup retention period.
 
 
-For flexible servers configured without high availability, the service provides local redundant storage with three copies of data, zone-redundant backup (in regions where it's supported), and built-in server resiliency to automatically restart a crashed server and relocate the server to another physical node. In case if a zone is down, we can perform Point-in-time restore to create a new server with the recovered backup data. Uptime SLA of 99.9% is offered in this configuration.
+For  servers configured without high availability, the service provides local redundant storage with three copies of data, zone-redundant backup (in regions where it's supported), and built-in server resiliency to automatically restart a crashed server and relocate the server to another physical node. In case if a zone is down, we can perform Point-in-time restore to create a new server with the recovered backup data. Uptime SLA of 99.9% is offered in this configuration.
 
 ![screenshot](Images/withoutHA.png)
 
@@ -106,7 +106,7 @@ This architecture provisions Azure Database for PostgreSQL flexible server with 
 ### 2. Zonal resilience (with read replica)
 This configuration deploys a flexible server instance with High Availability enabled using the "ZoneRedundant" option, geo-redundant backups, and a read replica in the same region as the primary. This setup provides protection against zonal outages and supports scaling out read-heavy workloads by directing read traffic to the replica through virtual endpoints.
 
-![screenshot](Images/inregion-readreplica.png)
+![screenshot](Images/readreplicazonal.png)
 
 ### 3. Regional resilience
 This architecture deploys a flexible server instance with High Availability enabled using the "ZoneRedundant" option and geo-redundant backups configured at server creation. It provisions one read replica in the same region as the primary server but in a different zone, along with another read replica in a different region. This setup ensures protection against both zonal and regional outages. The cross-region read replica supports a robust disaster recovery strategy, maintaining a Recovery Point Objective (RPO) of less than 5 minutes. In the event of a regional failover, the cross-region read replica can be promoted to serve as the new primary instance, enabling applications to remain operational with minimal downtime. This architecture offers the highest level of resiliency, covering all failure scenarios from zonal to regional outages, making it well suited for mission-critical workloads.
