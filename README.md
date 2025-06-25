@@ -169,4 +169,4 @@ Navigate to the Terraform scripts folder, where you'll find separate folders for
 3. **Apply the Plan**: 
    This command will apply the generated terraform plan:
    ```sh
-    terraform apply <file-name>.tfplan
+    terraform apply <file-name>.tfplan  
