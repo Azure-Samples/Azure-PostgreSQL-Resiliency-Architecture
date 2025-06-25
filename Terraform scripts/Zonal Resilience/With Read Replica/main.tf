@@ -79,5 +79,4 @@ resource "azurerm_postgresql_flexible_server_virtual_endpoint" "example1" {
   replica_server_id = azurerm_postgresql_flexible_server.replicaserver1.id
   type              = "ReadWrite"
   depends_on = [azurerm_postgresql_flexible_server.default, azurerm_postgresql_flexible_server.replicaserver1]
-
 }

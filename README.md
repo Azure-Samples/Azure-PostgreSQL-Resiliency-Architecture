@@ -144,11 +144,11 @@ To deploy this solution using Terraform, follow these steps:
 
    - **Zonal Resilience (With read replica)**:
 
-     Modify the variables in the two provided files: "variables.tf" and "main.tf". On "variables.tf" please add values to different attributes; on the second file "main.tf", find all the modules and resources that are deployed with one read replicas in the same region as that of the primary instance.
+     Modify the default value in variables in the two provided files: "variables.tf" and "main.tf". To add the values for the variables create a "terraform.tfvars" file and add the variable names; the "main.tf", find all the modules and resources that are deployed with one read replicas in the same region as that of the primary instance.
    
   - **Regional Resilience**:
    
-    Similar to the above, edit the necessary files to reflect your configuration. On "variables.tf" please add values to different attributes; on the second file "main.tf"find all the modules and resources that are deployed with one read replica in the same region as that of the primary instance and the another read replica in a different region as that of Primary instance.
+    Similar to the above, edit the necessary files to reflect your configuration. To add the values for the variables create a "terraform.tfvars" file and add the variable names, find all the modules and resources that are deployed with one read replica in the same region as that of the primary instance and the another read replica in a different region as that of Primary instance.
 
 ### Running the Terraform Script:    
 
@@ -164,7 +164,7 @@ Navigate to the Terraform scripts folder, where you'll find separate folders for
 
     Generate and save an execution plan to review the changes Terraform will make:
     ```sh
-   terraform plan -out <file-name>
+   terraform plan -var-file="terraform.tfvars" -out <file-name>
    ```
 3. **Apply the Plan**: 
    This command will apply the generated terraform plan:
